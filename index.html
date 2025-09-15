@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Game - DDD Architecture</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        #gameCanvas {
+            border: 3px solid #333;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .primary:hover {
+            background-color: #0056b3;
+        }
+        
+        .secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .secondary:hover {
+            background-color: #545b62;
+        }
+        
+        .game-info {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-item {
+            text-align: center;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .number-pad {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .number-pad-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .number-btn {
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .number-btn:hover {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .number-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .number-btn.disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            border-color: #dee2e6;
+        }
+        
+        .clear-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #dc3545;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .clear-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .selection-info {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 Sudoku Game</h1>
+        <canvas id="gameCanvas" width="540" height="540"></canvas>
+        
+        <div class="controls">
+            <button id="newGame" class="primary">New Game</button>
+            <button id="resetGame" class="secondary">Reset</button>
+            <button id="hintButton" class="secondary">Hint</button>
+        </div>
+        
+        <div class="number-pad">
+            <div class="number-pad-title">숫자 입력</div>
+            <div class="number-grid">
+                <button class="number-btn" data-number="1">1</button>
+                <button class="number-btn" data-number="2">2</button>
+                <button class="number-btn" data-number="3">3</button>
+                <button class="number-btn" data-number="4">4</button>
+                <button class="number-btn" data-number="5">5</button>
+                <button class="number-btn" data-number="6">6</button>
+                <button class="number-btn" data-number="7">7</button>
+                <button class="number-btn" data-number="8">8</button>
+                <button class="number-btn" data-number="9">9</button>
+            </div>
+            <button id="clearCell" class="clear-btn">지우기</button>
+            <div id="selectionInfo" class="selection-info">칸을 선택하고 숫자를 입력하세요</div>
+        </div>
+        
+        <div class="game-info">
+            <div class="info-item">
+                <div class="info-label">Time</div>
+                <div id="timer" class="info-value">00:00</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Moves</div>
+                <div id="moves" class="info-value">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Hints</div>
+                <div id="hints" class="info-value">0</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
