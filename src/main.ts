@@ -245,28 +245,32 @@ class SudokuApp {
     }
   }
 
-  private setupResponsiveCanvas(_canvas: HTMLCanvasElement, renderer: any): void {
+  private setupResponsiveCanvas(canvas: HTMLCanvasElement, renderer: any): void {
     const resizeGame = () => {
-      // 게임 메인 영역의 실제 크기 가져오기
-      const gameMain = document.querySelector('.game-main') as HTMLElement;
-      if (!gameMain) return;
+      // CSS에서 계산된 실제 캔버스 크기 가져오기
+      const rect = canvas.getBoundingClientRect();
+      const canvasSize = Math.min(rect.width, rect.height);
 
-      const rect = gameMain.getBoundingClientRect();
-      const padding = 20; // 패딩 고려
+      // Canvas의 내부 해상도를 CSS 크기에 맞춤 (고해상도 지원)
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      const internalSize = Math.floor(canvasSize * devicePixelRatio);
 
-      // 사용 가능한 크기 계산 (정사각형 유지)
-      const availableSize = Math.min(rect.width, rect.height) - padding;
-      const canvasSize = Math.max(availableSize, 200); // 최소 크기 보장
-
-      console.log('Simple responsive canvas:', {
-        gameMainRect: { width: rect.width, height: rect.height },
-        availableSize,
+      console.log('Responsive canvas resize:', {
+        cssSize: { width: rect.width, height: rect.height },
         canvasSize,
+        devicePixelRatio,
+        internalSize,
         timestamp: new Date().toISOString()
       });
 
-      // 캔버스 크기 조정
-      renderer.resize(canvasSize, canvasSize);
+      // Canvas 내부 해상도 설정
+      canvas.width = internalSize;
+      canvas.height = internalSize;
+
+      // Canvas CSS 크기는 이미 CSS에서 설정됨
+
+      // 렌더러에게 실제 캔버스 크기 알림
+      renderer.resize(internalSize, internalSize);
 
       // 게임 재렌더링
       const currentGame = this.gameController.getCurrentGame();

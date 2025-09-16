@@ -21,33 +21,37 @@
             align-items: center;
         }
 
-        /* 1단계: 스마트폰 세로모드 고정 크기 박스-인-박스 구조 */
-        /* 최외곽 래퍼 - 스마트폰 세로모드 360x800 */
+        /* 3단계: 반응형 최외곽 래퍼 + 고정비율 내부 구조 */
+        /* 최외곽 래퍼 - 뷰포트 크기에 따라 반응형 (기준 비율: 360x700) */
         .game-wrapper {
-            width: 360px;
-            height: 700px;
-            padding: 10px;
+            width: min(100vw, 100vh * 0.514);  /* 360/700 = 0.514 비율 유지 */
+            height: min(100vh, 100vw * 1.944); /* 700/360 = 1.944 비율 유지 */
+            max-width: 450px;   /* 최대 크기 제한 */
+            max-height: 875px;  /* 최대 크기 제한 */
+            min-width: 320px;   /* 최소 크기 보장 */
+            min-height: 622px;  /* 최소 크기 보장 */
+            padding: min(2.8vw, 20px); /* 패딩도 비례 조정 */
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* 게임 컨테이너 - 340x780 (래퍼의 94% 비율) */
+        /* 게임 컨테이너 - 래퍼의 94% 비율 (고정비율 유지) */
         .game-container {
-            width: 340px;
-            height: 680px;
+            width: 94%;
+            height: 97%;
             display: flex;
             flex-direction: column;
             background: white;
-            border-radius: 12px;
+            border-radius: min(1.7vw, 12px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
-        /* 헤더 영역 - 340x50 */
+        /* 헤더 영역 - 컨테이너의 7.35% 높이 (50/680) */
         .game-header {
-            width: 340px;
-            height: 50px;
+            width: 100%;
+            height: 7.35%;
             padding: 0;
             text-align: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -60,41 +64,41 @@
 
         .game-header h1 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: min(3.3vw, 1.2rem);
             font-weight: 700;
         }
 
-        /* 메인 게임 영역 - 340x320 */
+        /* 메인 게임 영역 - 컨테이너의 50% 높이 (340/680) */
         .game-main {
-            width: 340px;
-            height: 340px;
+            width: 100%;
+            height: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: min(2.8vw, 10px);
             background: #f8f9fa;
             flex-shrink: 0;
             box-sizing: border-box;
         }
 
-        /* 캔버스 - 300x300 */
+        /* 캔버스 - 메인 영역의 88% 크기 (300/340) */
         #gameCanvas {
-            width: 300px;
-            height: 300px;
-            border: 2px solid #333;
-            border-radius: 6px;
+            width: 88%;
+            height: 88%;
+            border: max(1px, 0.56vw) solid #333;
+            border-radius: min(1.67vw, 6px);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
             background: white;
         }
 
-        /* 컨트롤 영역 - 340x50 */
+        /* 컨트롤 영역 - 컨테이너의 8.82% 높이 (60/680) */
         .game-controls {
-            width: 340px;
-            height: 60px;
+            width: 100%;
+            height: 8.82%;
             padding: 0;
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: min(1.67vw, 6px);
             background: #f8f9fa;
             border-top: 1px solid #e9ecef;
             align-items: center;
@@ -102,13 +106,13 @@
             box-sizing: border-box;
         }
 
-        /* 버튼 기본 스타일 - 각 버튼 106x40 (컨트롤 영역의 31% 너비) */
+        /* 버튼 기본 스타일 - 각 버튼 31% 너비 */
         .btn {
-            width: 106px;
-            height: 40px;
-            font-size: 0.85rem;
+            width: 29.5%;
+            height: 67%;
+            font-size: min(2.36vw, 0.85rem);
             border: none;
-            border-radius: 6px;
+            border-radius: min(1.67vw, 6px);
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
@@ -141,11 +145,11 @@
             opacity: 0.5;
         }
 
-        /* 숫자 입력 영역 - 340x240 */
+        /* 숫자 입력 영역 - 컨테이너의 23.53% 높이 (160/680) */
         .game-input {
-            width: 340px;
-            height: 160px;
-            padding: 10px;
+            width: 100%;
+            height: 23.53%;
+            padding: min(2.78vw, 10px);
             background: white;
             border-top: 1px solid #e9ecef;
             flex-shrink: 0;
@@ -157,32 +161,32 @@
 
         .number-pad-title {
             text-align: center;
-            font-size: 1rem;
+            font-size: min(2.78vw, 1rem);
             font-weight: 600;
             color: #333;
             margin: 0;
-            height: 20px;
-            line-height: 20px;
+            height: 12.5%;
+            line-height: 12.5%;
         }
 
-        /* 숫자 그리드 - 320x64 */
+        /* 숫자 그리드 - 입력 영역의 94% 너비, 25% 높이 */
         .number-grid {
             display: grid;
             grid-template-columns: repeat(9, 1fr);
-            gap: 3px;
-            width: 320px;
-            height: 40px;
+            gap: min(0.83vw, 3px);
+            width: 94%;
+            height: 25%;
             margin: 0 auto;
         }
 
-        /* 숫자 버튼 - 각각 32x32 정사각형 (스마트폰 터치에 적합) */
+        /* 숫자 버튼 - 그리드 셀에 맞춤 (스마트폰 터치에 적합) */
         .number-btn {
-            width: 32px;
-            height: 32px;
-            font-size: 0.9rem;
+            width: 100%;
+            height: 100%;
+            font-size: min(2.5vw, 0.9rem);
             font-weight: bold;
-            border: 2px solid #ddd;
-            border-radius: 4px;
+            border: max(1px, 0.56vw) solid #ddd;
+            border-radius: min(1.11vw, 4px);
             background-color: #f9f9f9;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -199,18 +203,19 @@
             transform: scale(0.95);
         }
 
-        /* 클리어 버튼 - 320x36 (입력 영역과 같은 너비) */
+        /* 클리어 버튼 - 입력 영역의 94% 너비, 22.5% 높이 */
         .clear-btn {
-            width: 320px;
-            height: 36px;
-            font-size: 0.9rem;
+            width: 94%;
+            height: 22.5%;
+            font-size: min(2.5vw, 0.9rem);
             font-weight: bold;
-            border: 2px solid #dc3545;
-            border-radius: 6px;
+            border: max(1px, 0.56vw) solid #dc3545;
+            border-radius: min(1.67vw, 6px);
             background-color: #fff;
             color: #dc3545;
             cursor: pointer;
             transition: all 0.2s ease;
+            margin: 0 auto;
         }
 
         .clear-btn:hover {
@@ -219,28 +224,33 @@
             transform: translateY(-1px);
         }
 
-        /* 선택 정보 - 320x32 */
+        /* 선택 정보 - 입력 영역의 94% 너비, 20% 높이 */
         .selection-info {
-            margin-top: 8px;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: min(2.22vw, 0.8rem);
             color: #666;
-            height: 32px;
-            line-height: 32px;
+            height: 20%;
+            line-height: 20%;
             transition: color 0.3s ease;
+            margin: 0 auto;
+            width: 94%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* 게임 정보 영역 - 340x120 (컨테이너의 15% 높이) */
+        /* 게임 정보 영역 - 컨테이너의 8.82% 높이 (60/680) */
         .game-stats {
-            width: 340px;
-            height: 60px;
-            padding: 10px;
+            width: 100%;
+            height: 8.82%;
+            padding: min(2.78vw, 10px);
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: min(2.22vw, 8px);
             background: #f8f9fa;
             border-top: 1px solid #e9ecef;
             align-items: center;
+            box-sizing: border-box;
         }
 
         /* 정보 아이템들을 3개씩 배치 */
@@ -248,31 +258,42 @@
             display: flex;
             justify-content: space-around;
             width: 100%;
+            height: 100%;
+            align-items: center;
         }
 
-        /* 정보 아이템 - 각각 100x40 */
+        /* 정보 아이템 - 각각 29.4% 너비 */
         .info-item {
             text-align: center;
-            width: 100px;
-            height: 40px;
+            width: 29.4%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .info-label {
-            font-size: 0.7rem;
+            font-size: min(1.94vw, 0.7rem);
             color: #666;
             text-transform: uppercase;
             font-weight: 600;
-            margin-bottom: 2px;
-            height: 14px;
-            line-height: 14px;
+            margin: 0;
+            height: 35%;
+            line-height: 35%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .info-value {
-            font-size: 1rem;
+            font-size: min(2.78vw, 1rem);
             font-weight: bold;
             color: #333;
-            height: 18px;
-            line-height: 18px;
+            height: 45%;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
     </style>
@@ -287,7 +308,7 @@
 
             <!-- 메인 게임 영역 -->
             <div class="game-main">
-                <canvas id="gameCanvas" width="300" height="300"></canvas>
+                <canvas id="gameCanvas"></canvas>
             </div>
 
             <!-- 숫자 입력 영역 -->
