@@ -17,77 +17,121 @@
             background-color: #f0f2f5;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
+        }
+
+        /* 1단계: 스마트폰 세로모드 고정 크기 박스-인-박스 구조 */
+        /* 최외곽 래퍼 - 스마트폰 세로모드 360x800 */
+        .game-wrapper {
+            width: 360px;
+            height: 700px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 게임 컨테이너 - 340x780 (래퍼의 94% 비율) */
+        .game-container {
+            width: 340px;
+            height: 680px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
-        
-        .container {
-            width: 540px;
-            height: 1050px;
+
+        /* 헤더 영역 - 340x50 */
+        .game-header {
+            width: 340px;
+            height: 50px;
+            padding: 0;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
             align-items: center;
-            transform-origin: center center;
-            padding: 20px 20px 30px 20px;
-            box-sizing: border-box;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            justify-content: center;
+            flex-shrink: 0;
         }
-        
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 36px;
+
+        .game-header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
         }
-        
-        #gameCanvas {
-            border: 3px solid #333;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            display: block;
-        }
-        
-        .controls {
-            margin-top: 20px;
+
+        /* 메인 게임 영역 - 340x320 */
+        .game-main {
+            width: 340px;
+            height: 340px;
             display: flex;
             justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            flex-shrink: 0;
+            box-sizing: border-box;
         }
-        
-        /* Button Styles */
+
+        /* 캔버스 - 300x300 */
+        #gameCanvas {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #333;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            background: white;
+        }
+
+        /* 컨트롤 영역 - 340x50 */
+        .game-controls {
+            width: 340px;
+            height: 60px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            align-items: center;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        /* 버튼 기본 스타일 - 각 버튼 106x40 (컨트롤 영역의 31% 너비) */
         .btn {
-            padding: 12px 24px;
-            font-size: 18px;
+            width: 106px;
+            height: 40px;
+            font-size: 0.85rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 500;
+            font-weight: 600;
         }
-        
+
         .btn-primary {
             background-color: #007bff;
             color: white;
         }
-        
+
         .btn-primary:hover {
             background-color: #0056b3;
+            transform: translateY(-1px);
         }
-        
+
         .btn-secondary {
             background-color: #6c757d;
             color: white;
         }
-        
+
         .btn-secondary:hover {
             background-color: #545b62;
+            transform: translateY(-1px);
         }
 
         .btn-secondary:disabled {
@@ -96,159 +140,197 @@
             cursor: not-allowed;
             opacity: 0.5;
         }
-        
-        /* Card Styles */
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            width: 100%;
-            max-width: 540px;
+
+        /* 숫자 입력 영역 - 340x240 */
+        .game-input {
+            width: 340px;
+            height: 160px;
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .game-info {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px;
-        }
-        
-        .info-item {
-            text-align: center;
-        }
-        
-        .info-label {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-        }
-        
-        .info-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .number-pad {
-            padding: 20px;
-        }
-        
         .number-pad-title {
             text-align: center;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 1rem;
+            font-weight: 600;
             color: #333;
-            margin-bottom: 15px;
+            margin: 0;
+            height: 20px;
+            line-height: 20px;
         }
-        
+
+        /* 숫자 그리드 - 320x64 */
         .number-grid {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 3px;
+            width: 320px;
+            height: 40px;
+            margin: 0 auto;
         }
-        
-        /* Number Button Styles */
+
+        /* 숫자 버튼 - 각각 32x32 정사각형 (스마트폰 터치에 적합) */
         .number-btn {
-            width: 48px;
-            height: 48px;
-            font-size: 18px;
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
             font-weight: bold;
             border: 2px solid #ddd;
-            border-radius: 8px;
+            border-radius: 4px;
             background-color: #f9f9f9;
             cursor: pointer;
             transition: all 0.2s ease;
-            flex-shrink: 0;
         }
-        
+
         .number-btn:hover {
             background-color: #007bff;
             color: white;
             border-color: #007bff;
             transform: translateY(-1px);
         }
-        
+
         .number-btn:active {
             transform: scale(0.95);
         }
-        
-        .number-btn:disabled {
-            background-color: #e9ecef;
-            color: #6c757d;
-            cursor: not-allowed;
-            border-color: #dee2e6;
-        }
-        
+
+        /* 클리어 버튼 - 320x36 (입력 영역과 같은 너비) */
         .clear-btn {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
+            width: 320px;
+            height: 36px;
+            font-size: 0.9rem;
             font-weight: bold;
             border: 2px solid #dc3545;
-            border-radius: 8px;
+            border-radius: 6px;
             background-color: #fff;
             color: #dc3545;
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .clear-btn:hover {
             background-color: #dc3545;
             color: white;
             transform: translateY(-1px);
         }
-        
+
+        /* 선택 정보 - 320x32 */
         .selection-info {
-            margin-top: 15px;
+            margin-top: 8px;
             text-align: center;
-            font-size: 14px;
+            font-size: 0.8rem;
             color: #666;
-            min-height: 20px;
+            height: 32px;
+            line-height: 32px;
             transition: color 0.3s ease;
         }
+
+        /* 게임 정보 영역 - 340x120 (컨테이너의 15% 높이) */
+        .game-stats {
+            width: 340px;
+            height: 60px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            align-items: center;
+        }
+
+        /* 정보 아이템들을 3개씩 배치 */
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        /* 정보 아이템 - 각각 100x40 */
+        .info-item {
+            text-align: center;
+            width: 100px;
+            height: 40px;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 2px;
+            height: 14px;
+            line-height: 14px;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+            height: 18px;
+            line-height: 18px;
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧩 Sudoku Game</h1>
-        <canvas id="gameCanvas" width="540" height="540"></canvas>
-        
-        <div class="controls">
-            <button id="newGame" class="btn btn-primary">New Game</button>
-            <button id="resetGame" class="btn btn-secondary">Reset</button>
-            <button id="hintButton" class="btn btn-secondary">Hint</button>
-        </div>
-        
-        <div class="card number-pad">
-            <div class="number-pad-title">숫자 입력</div>
-            <div class="number-grid">
-                <button class="number-btn" data-number="1">1</button>
-                <button class="number-btn" data-number="2">2</button>
-                <button class="number-btn" data-number="3">3</button>
-                <button class="number-btn" data-number="4">4</button>
-                <button class="number-btn" data-number="5">5</button>
-                <button class="number-btn" data-number="6">6</button>
-                <button class="number-btn" data-number="7">7</button>
-                <button class="number-btn" data-number="8">8</button>
-                <button class="number-btn" data-number="9">9</button>
+    <div class="game-wrapper">
+        <div class="game-container">
+            <!-- 헤더 영역 -->
+            <div class="game-header">
+                <h1>🧩 Sudoku Game</h1>
             </div>
-            <button id="clearCell" class="clear-btn">지우기</button>
-            <div id="selectionInfo" class="selection-info">칸을 선택하고 숫자를 입력하세요</div>
-        </div>
-        
-        <div class="card game-info">
-            <div class="info-item">
-                <div class="info-label">Time</div>
-                <div id="timer" class="info-value">00:00</div>
+
+            <!-- 메인 게임 영역 -->
+            <div class="game-main">
+                <canvas id="gameCanvas" width="300" height="300"></canvas>
             </div>
-            <div class="info-item">
-                <div class="info-label">Progress</div>
-                <div id="completion" class="info-value">0/81</div>
+
+            <!-- 숫자 입력 영역 -->
+            <div class="game-input">
+                <div class="number-pad-title">숫자 입력</div>
+                <div class="number-grid">
+                    <button class="number-btn" data-number="1">1</button>
+                    <button class="number-btn" data-number="2">2</button>
+                    <button class="number-btn" data-number="3">3</button>
+                    <button class="number-btn" data-number="4">4</button>
+                    <button class="number-btn" data-number="5">5</button>
+                    <button class="number-btn" data-number="6">6</button>
+                    <button class="number-btn" data-number="7">7</button>
+                    <button class="number-btn" data-number="8">8</button>
+                    <button class="number-btn" data-number="9">9</button>
+                </div>
+                <button id="clearCell" class="clear-btn">지우기</button>
+                <div id="selectionInfo" class="selection-info">칸을 선택하고 숫자를 입력하세요</div>
             </div>
-            <div class="info-item">
-                <div class="info-label">Hints</div>
-                <div id="hints" class="info-value">0</div>
+
+            <!-- 게임 정보 영역 -->
+            <div class="game-stats">
+                <div class="stats-row">
+                    <div class="info-item">
+                        <div class="info-label">Time</div>
+                        <div id="timer" class="info-value">00:00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Progress</div>
+                        <div id="completion" class="info-value">0/81</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Hints</div>
+                        <div id="hints" class="info-value">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 컨트롤 영역 -->
+            <div class="game-controls">
+                <button id="newGame" class="btn btn-primary">New Game</button>
+                <button id="resetGame" class="btn btn-secondary">Reset</button>
+                <button id="hintButton" class="btn btn-secondary">Hint</button>
             </div>
         </div>
     </div>

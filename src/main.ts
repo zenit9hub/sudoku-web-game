@@ -47,8 +47,19 @@ class SudokuApp {
     const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
     canvas.addEventListener('click', (event) => {
       const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
+
+      // 캔버스 내 실제 좌표 계산 (CSS 스케일링 자동 고려됨)
+      const x = ((event.clientX - rect.left) / rect.width) * canvas.width;
+      const y = ((event.clientY - rect.top) / rect.height) * canvas.height;
+
+      console.log('Click event:', {
+        clientX: event.clientX,
+        clientY: event.clientY,
+        rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+        canvas: { width: canvas.width, height: canvas.height },
+        calculated: { x, y }
+      });
+
       this.gameController.handleCellClick(x, y);
     });
   }
@@ -236,33 +247,27 @@ class SudokuApp {
 
   private setupResponsiveCanvas(_canvas: HTMLCanvasElement, renderer: any): void {
     const resizeGame = () => {
-      // 기본 캔버스 크기
-      const baseCanvasSize = 540;
-      
-      // 뷰포트 크기 가져오기
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      
-      // 전체 컨테이너 높이 계산 (모든 요소들의 실제 높이 + 추가 여백)
-      // 제목(60px) + 캔버스(540px) + 컨트롤(80px) + 숫자패드(140px) + 게임정보(80px) + 여백들(150px)
-      const totalContentHeight = 60 + baseCanvasSize + 80 + 140 + 80 + 150; // 약 1050px
-      
-      // 스케일 계산 (가로/세로 중 작은 값에 맞춤, 패딩 고려)
-      const scaleX = (viewportWidth - 40) / baseCanvasSize;
-      const scaleY = (viewportHeight - 40) / totalContentHeight;
-      const scale = Math.min(scaleX, scaleY, 1); // 최대 1배까지만
-      
-      // 컨테이너에 스케일 적용
-      const container = document.querySelector('.container') as HTMLElement;
-      if (container) {
-        container.style.transform = `translate(-50%, -50%) scale(${scale})`;
-        container.style.transformOrigin = 'center center';
-      }
-      
-      // 캔버스 크기 설정
-      const canvasSize = baseCanvasSize;
+      // 게임 메인 영역의 실제 크기 가져오기
+      const gameMain = document.querySelector('.game-main') as HTMLElement;
+      if (!gameMain) return;
+
+      const rect = gameMain.getBoundingClientRect();
+      const padding = 20; // 패딩 고려
+
+      // 사용 가능한 크기 계산 (정사각형 유지)
+      const availableSize = Math.min(rect.width, rect.height) - padding;
+      const canvasSize = Math.max(availableSize, 200); // 최소 크기 보장
+
+      console.log('Simple responsive canvas:', {
+        gameMainRect: { width: rect.width, height: rect.height },
+        availableSize,
+        canvasSize,
+        timestamp: new Date().toISOString()
+      });
+
+      // 캔버스 크기 조정
       renderer.resize(canvasSize, canvasSize);
-      
+
       // 게임 재렌더링
       const currentGame = this.gameController.getCurrentGame();
       if (currentGame) {
@@ -274,11 +279,18 @@ class SudokuApp {
       }
     };
 
-    // 초기 리사이즈
-    resizeGame();
+    // 초기 리사이즈 (DOM 로드 후 실행)
+    setTimeout(resizeGame, 200);
 
-    // 윈도우 리사이즈 이벤트 처리
-    window.addEventListener('resize', resizeGame);
+    // 윈도우 리사이즈 이벤트
+    window.addEventListener('resize', () => {
+      setTimeout(resizeGame, 100);
+    });
+
+    // 방향 변경 이벤트 (모바일)
+    window.addEventListener('orientationchange', () => {
+      setTimeout(resizeGame, 300);
+    });
   }
 }
 
