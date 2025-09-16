@@ -385,7 +385,7 @@ export class SudokuGeneratorService {
     return new SudokuGrid(cells);
   }
 
-  private getFallbackPuzzle(difficulty: Difficulty): SudokuGrid {
+  private getFallbackPuzzle(_difficulty: Difficulty): SudokuGrid {
     // 실패 시 기본 퍼즐 반환
     const easyPuzzle = [
       [5, 3, 0, 0, 7, 0, 0, 0, 0],

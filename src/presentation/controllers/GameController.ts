@@ -3,7 +3,7 @@ import { GameRenderer } from '../interfaces/GameRenderer.js';
 import { SudokuGame } from '../../domain/models/SudokuGame.js';
 import { Position } from '../../domain/models/Position.js';
 import { CellValue } from '../../domain/models/CellValue.js';
-import { Difficulty, GameStatus } from '../../domain/models/GameState.js';
+import { Difficulty } from '../../domain/models/GameState.js';
 
 export interface GameControllerEvents {
   onGameUpdate: (game: SudokuGame) => void;
@@ -73,31 +73,17 @@ export class GameController {
   }
 
   async handleNumberInput(value: number): Promise<void> {
-    console.log('GameController.handleNumberInput called with:', value);
-    
-    if (!this.currentGame) {
-      console.log('No current game');
-      return;
-    }
-
-    // Get selected position from game state instead of internal state
-    if (!this.currentGame.state.selectedCell) {
-      console.log('No selected cell');
+    if (!this.currentGame?.state.selectedCell) {
       this.events.onError('셀을 먼저 선택해주세요');
       return;
     }
 
-    console.log('Selected cell:', this.currentGame.state.selectedCell);
-
     try {
       const { row, col } = this.currentGame.state.selectedCell;
-      const position = new Position(row, col);
-      const cellValue = CellValue.from(value);
-      
       const result = await this.gameService.makeMove(
         this.currentGame, 
-        position, 
-        cellValue
+        new Position(row, col), 
+        CellValue.from(value)
       );
 
       this.currentGame = result.game;
@@ -146,6 +132,9 @@ export class GameController {
     try {
       const hint = await this.gameService.getHint(this.currentGame);
       if (hint) {
+        // hint.game에는 이미 힌트 카운트가 증가된 상태
+        this.currentGame = hint.game;
+        
         // Auto-fill the hint
         const result = await this.gameService.makeMove(
           this.currentGame,

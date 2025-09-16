@@ -5,22 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku Game - DDD Architecture</title>
     <style>
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            padding: 20px;
+            padding: 0;
             font-family: 'Arial', sans-serif;
             background-color: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
         
         .container {
-            max-width: 600px;
-            margin: 0 auto;
-            text-align: center;
+            width: 540px;
+            height: 1050px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            transform-origin: center center;
+            padding: 20px 20px 30px 20px;
+            box-sizing: border-box;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         
         h1 {
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-size: 36px;
         }
         
         #gameCanvas {
@@ -28,50 +50,67 @@
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: block;
         }
         
         .controls {
             margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
+        /* Button Styles */
+        .btn {
+            padding: 12px 24px;
+            font-size: 18px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
         
-        .primary {
+        .btn-primary {
             background-color: #007bff;
             color: white;
         }
         
-        .primary:hover {
+        .btn-primary:hover {
             background-color: #0056b3;
         }
         
-        .secondary {
+        .btn-secondary {
             background-color: #6c757d;
             color: white;
         }
         
-        .secondary:hover {
+        .btn-secondary:hover {
             background-color: #545b62;
         }
+
+        .btn-secondary:disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
         
-        .game-info {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-around;
+        /* Card Styles */
+        .card {
             background-color: white;
-            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            width: 100%;
+            max-width: 540px;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
         }
         
         .info-item {
@@ -79,23 +118,19 @@
         }
         
         .info-label {
-            font-size: 12px;
+            font-size: 14px;
             color: #666;
             text-transform: uppercase;
         }
         
         .info-value {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             color: #333;
         }
         
         .number-pad {
-            margin-top: 20px;
-            background-color: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
         
         .number-pad-title {
@@ -107,35 +142,38 @@
         }
         
         .number-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
             margin-bottom: 15px;
         }
         
+        /* Number Button Styles */
         .number-btn {
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             font-size: 18px;
             font-weight: bold;
             border: 2px solid #ddd;
             border-radius: 8px;
             background-color: #f9f9f9;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
         }
         
         .number-btn:hover {
             background-color: #007bff;
             color: white;
             border-color: #007bff;
+            transform: translateY(-1px);
         }
         
         .number-btn:active {
             transform: scale(0.95);
         }
         
-        .number-btn.disabled {
+        .number-btn:disabled {
             background-color: #e9ecef;
             color: #6c757d;
             cursor: not-allowed;
@@ -152,20 +190,22 @@
             background-color: #fff;
             color: #dc3545;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
         
         .clear-btn:hover {
             background-color: #dc3545;
             color: white;
+            transform: translateY(-1px);
         }
         
         .selection-info {
-            margin-top: 10px;
+            margin-top: 15px;
             text-align: center;
             font-size: 14px;
             color: #666;
             min-height: 20px;
+            transition: color 0.3s ease;
         }
     </style>
 </head>
@@ -175,12 +215,12 @@
         <canvas id="gameCanvas" width="540" height="540"></canvas>
         
         <div class="controls">
-            <button id="newGame" class="primary">New Game</button>
-            <button id="resetGame" class="secondary">Reset</button>
-            <button id="hintButton" class="secondary">Hint</button>
+            <button id="newGame" class="btn btn-primary">New Game</button>
+            <button id="resetGame" class="btn btn-secondary">Reset</button>
+            <button id="hintButton" class="btn btn-secondary">Hint</button>
         </div>
         
-        <div class="number-pad">
+        <div class="card number-pad">
             <div class="number-pad-title">숫자 입력</div>
             <div class="number-grid">
                 <button class="number-btn" data-number="1">1</button>
@@ -197,14 +237,14 @@
             <div id="selectionInfo" class="selection-info">칸을 선택하고 숫자를 입력하세요</div>
         </div>
         
-        <div class="game-info">
+        <div class="card game-info">
             <div class="info-item">
                 <div class="info-label">Time</div>
                 <div id="timer" class="info-value">00:00</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Moves</div>
-                <div id="moves" class="info-value">0</div>
+                <div class="info-label">Progress</div>
+                <div id="completion" class="info-value">0/81</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Hints</div>

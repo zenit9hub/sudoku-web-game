@@ -33,21 +33,27 @@ class SudokuApp {
     });
 
     this.setupEventListeners();
+    this.setupResponsiveCanvas(canvas, renderer);
     this.startNewGame();
   }
 
   private setupEventListeners(): void {
-    // Canvas click events
+    this.setupCanvasEvents();
+    this.setupKeyboardEvents();
+    this.setupButtonEvents();
+  }
+
+  private setupCanvasEvents(): void {
     const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
     canvas.addEventListener('click', (event) => {
       const rect = canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
-      console.log('Canvas clicked at:', x, y);
       this.gameController.handleCellClick(x, y);
     });
+  }
 
-    // Keyboard events
+  private setupKeyboardEvents(): void {
     document.addEventListener('keydown', (event) => {
       if (event.key >= '1' && event.key <= '9') {
         this.gameController.handleNumberInput(parseInt(event.key));
@@ -55,42 +61,31 @@ class SudokuApp {
         this.gameController.handleClearCell();
       }
     });
+  }
 
-    // Button events
-    const newGameBtn = document.getElementById('newGame');
-    if (newGameBtn) {
-      newGameBtn.addEventListener('click', () => this.startNewGame());
-    }
+  private setupButtonEvents(): void {
+    const buttons = {
+      newGame: () => this.startNewGame(),
+      resetGame: () => this.gameController.handleReset(),
+      hintButton: () => this.gameController.handleHint(),
+      clearCell: () => this.gameController.handleClearCell()
+    };
 
-    const resetBtn = document.getElementById('resetGame');
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => this.gameController.handleReset());
-    }
-
-    const hintBtn = document.getElementById('hintButton');
-    if (hintBtn) {
-      hintBtn.addEventListener('click', () => this.gameController.handleHint());
-    }
+    Object.entries(buttons).forEach(([id, handler]) => {
+      const button = document.getElementById(id);
+      if (button) button.addEventListener('click', handler);
+    });
 
     // Number pad events
-    const numberButtons = document.querySelectorAll('.number-btn');
-    numberButtons.forEach(button => {
+    document.querySelectorAll('.number-btn').forEach(button => {
       button.addEventListener('click', (event) => {
         const target = event.target as HTMLButtonElement;
         const number = parseInt(target.dataset.number || '0');
-        console.log('Number button clicked:', number);
         if (number >= 1 && number <= 9) {
           this.gameController.handleNumberInput(number);
         }
       });
     });
-
-    const clearBtn = document.getElementById('clearCell');
-    if (clearBtn) {
-      clearBtn.addEventListener('click', () => {
-        this.gameController.handleClearCell();
-      });
-    }
   }
 
   private async startNewGame(): Promise<void> {
@@ -104,46 +99,84 @@ class SudokuApp {
   }
 
   private handleGameComplete(game: SudokuGame): void {
-    this.updateGameInfo(game);
+    // 타이머를 먼저 정지하고 최종 시간을 업데이트
     this.stopTimer();
     
+    // 최종 경과 시간 계산
+    const finalElapsedTime = Math.floor((new Date().getTime() - game.state.statistics.startTime.getTime()) / 1000);
+    
+    // 최종 시간으로 화면 업데이트
+    const timerElement = document.getElementById('timer');
+    if (timerElement) {
+      timerElement.textContent = this.formatTime(finalElapsedTime);
+    }
+    
+    // 다른 통계 정보 업데이트
+    this.updateGameInfo(game);
+    
     setTimeout(() => {
-      alert(`🎉 Congratulations! You completed the puzzle!\\n\\nTime: ${this.formatTime(game.state.statistics.elapsedTime)}\\nMoves: ${game.state.statistics.moves}\\nHints: ${game.state.statistics.hints}`);
+      const stats = game.state.statistics;
+      alert(`🎉 축하합니다! 퍼즐을 완성했습니다!\n\n⏱️ 시간: ${this.formatTime(finalElapsedTime)}\n🎯 이동: ${stats.moves}회\n💡 힌트: ${stats.hints}회`);
     }, 100);
   }
 
   private handleError(error: string): void {
-    console.error('Game Error:', error);
-    // 사용자에게 에러 메시지 표시
+    this.showMessage(error, '#dc3545', 3000);
+  }
+
+  private showMessage(message: string, color: string = '#666', duration: number = 0): void {
     const selectionInfo = document.getElementById('selectionInfo');
-    if (selectionInfo) {
-      selectionInfo.textContent = error;
-      selectionInfo.style.color = '#dc3545';
-      
-      // 3초 후 원래 메시지로 복구
+    if (!selectionInfo) return;
+
+    selectionInfo.textContent = message;
+    selectionInfo.style.color = color;
+    
+    if (duration > 0) {
       setTimeout(() => {
-        if (this.gameController.getCurrentGame()) {
-          this.updateSelectionInfo(this.gameController.getCurrentGame()!);
+        const currentGame = this.gameController.getCurrentGame();
+        if (currentGame) {
+          this.updateSelectionInfo(currentGame);
         }
-      }, 3000);
+      }, duration);
     }
   }
 
   private updateGameInfo(game: SudokuGame): void {
-    const movesElement = document.getElementById('moves');
-    if (movesElement) {
-      movesElement.textContent = game.state.statistics.moves.toString();
-    }
+    const stats = game.state.statistics;
+    
+    // 실시간 경과 시간 계산 (타이머와 동일한 방식)
+    const currentTime = new Date().getTime();
+    const startTime = stats.startTime.getTime();
+    const realTimeElapsed = Math.floor((currentTime - startTime) / 1000);
+    
+    // 완성도 계산 (채워진 셀 / 전체 셀)
+    const filledCells = this.getFilledCellsCount(game);
+    const totalCells = 81;
+    
+    const updates = {
+      completion: `${filledCells}/${totalCells}`,
+      hints: stats.hints.toString(),
+      timer: this.formatTime(realTimeElapsed)
+    };
 
-    const hintsElement = document.getElementById('hints');
-    if (hintsElement) {
-      hintsElement.textContent = game.state.statistics.hints.toString();
-    }
+    Object.entries(updates).forEach(([id, value]) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value;
+    });
+  }
 
-    const timerElement = document.getElementById('timer');
-    if (timerElement) {
-      timerElement.textContent = this.formatTime(game.state.statistics.elapsedTime);
+  private getFilledCellsCount(game: SudokuGame): number {
+    let count = 0;
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        const position = new Position(row, col);
+        const cell = game.grid.getCell(position);
+        if (!cell.isEmpty()) {
+          count++;
+        }
+      }
     }
+    return count;
   }
 
   private startTimer(game: SudokuGame): void {
@@ -199,6 +232,53 @@ class SudokuApp {
       selectionInfoElement.textContent = '칸을 선택하고 숫자를 입력하세요';
       selectionInfoElement.style.color = '#666';
     }
+  }
+
+  private setupResponsiveCanvas(_canvas: HTMLCanvasElement, renderer: any): void {
+    const resizeGame = () => {
+      // 기본 캔버스 크기
+      const baseCanvasSize = 540;
+      
+      // 뷰포트 크기 가져오기
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      // 전체 컨테이너 높이 계산 (모든 요소들의 실제 높이 + 추가 여백)
+      // 제목(60px) + 캔버스(540px) + 컨트롤(80px) + 숫자패드(140px) + 게임정보(80px) + 여백들(150px)
+      const totalContentHeight = 60 + baseCanvasSize + 80 + 140 + 80 + 150; // 약 1050px
+      
+      // 스케일 계산 (가로/세로 중 작은 값에 맞춤, 패딩 고려)
+      const scaleX = (viewportWidth - 40) / baseCanvasSize;
+      const scaleY = (viewportHeight - 40) / totalContentHeight;
+      const scale = Math.min(scaleX, scaleY, 1); // 최대 1배까지만
+      
+      // 컨테이너에 스케일 적용
+      const container = document.querySelector('.container') as HTMLElement;
+      if (container) {
+        container.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        container.style.transformOrigin = 'center center';
+      }
+      
+      // 캔버스 크기 설정
+      const canvasSize = baseCanvasSize;
+      renderer.resize(canvasSize, canvasSize);
+      
+      // 게임 재렌더링
+      const currentGame = this.gameController.getCurrentGame();
+      if (currentGame) {
+        renderer.render(currentGame, {
+          highlightErrors: true,
+          showPossibleValues: false,
+          theme: 'light'
+        });
+      }
+    };
+
+    // 초기 리사이즈
+    resizeGame();
+
+    // 윈도우 리사이즈 이벤트 처리
+    window.addEventListener('resize', resizeGame);
   }
 }
 
