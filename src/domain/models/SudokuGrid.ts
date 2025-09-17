@@ -77,4 +77,25 @@ export class SudokuGrid {
   isFull(): boolean {
     return this.getAllCells().every(cell => !cell.isEmpty());
   }
+
+  /**
+   * Get all empty cells (non-given, non-filled)
+   */
+  getEmptyCells(): Cell[] {
+    return this.getAllCells().filter(cell => cell.isEmpty() && !cell.isGiven);
+  }
+
+  /**
+   * Get all given cells (pre-filled cells from puzzle)
+   */
+  getGivenCells(): Cell[] {
+    return this.getAllCells().filter(cell => cell.isGiven);
+  }
+
+  /**
+   * Get all filled cells (have values)
+   */
+  getFilledCells(): Cell[] {
+    return this.getAllCells().filter(cell => !cell.isEmpty());
+  }
 }

@@ -7,6 +7,7 @@ import { Cell } from '../../domain/models/Cell';
 import { SudokuValidationService } from '../../domain/services/SudokuValidationService';
 import { SudokuGeneratorService } from '../../domain/services/SudokuGeneratorService';
 import { GameRepository } from '../../infrastructure/interfaces/GameRepository';
+import { create9x9Grid } from '../../utils/index';
 
 export interface MoveResult {
   success: boolean;
@@ -80,7 +81,7 @@ export class GameService {
   }
 
   async getHint(game: SudokuGame): Promise<HintResult | null> {
-    const emptyCells = game.grid.getAllCells().filter(cell => cell.isEmpty() && !cell.isGiven);
+    const emptyCells = game.grid.getEmptyCells();
     
     if (emptyCells.length === 0) {
       return null;
@@ -265,8 +266,7 @@ export class GameService {
   }
 
   private createGridFromArray(puzzleArray: number[][]): SudokuGrid {
-    const cells = Array.from({ length: 9 }, (_, row) =>
-      Array.from({ length: 9 }, (_, col) => {
+    const cells = create9x9Grid((row, col) => {
         const position = new Position(row, col);
         const puzzleValue = puzzleArray[row][col];
         
@@ -276,8 +276,7 @@ export class GameService {
         } else {
           return new Cell(position, CellValue.empty(), { isGiven: false });
         }
-      })
-    );
+    });
 
     return new SudokuGrid(cells);
   }

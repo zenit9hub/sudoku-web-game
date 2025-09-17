@@ -1,5 +1,5 @@
 import { SudokuGame } from '@/domain/models/SudokuGame';
-import { APP_CONFIG } from '../config/AppConfig';
+import { formatTime } from '../../utils/index';
 
 /**
  * Manages game timer functionality
@@ -8,7 +8,6 @@ import { APP_CONFIG } from '../config/AppConfig';
 export class TimerManager {
   private animationFrameId: number | null = null;
   private startTime: Date | null = null;
-  private lastUpdateTime: number = 0;
   private lastDisplayedSeconds: number = -1;
 
   constructor(private onTimeUpdate: (formattedTime: string) => void) {}
@@ -25,7 +24,6 @@ export class TimerManager {
 
     this.stop(); // Clear any existing timer
     this.startTime = game.state.statistics.startTime;
-    this.lastUpdateTime = performance.now();
     this.lastDisplayedSeconds = -1;
     this.tick();
   }
@@ -44,12 +42,11 @@ export class TimerManager {
    * Timer tick using requestAnimationFrame for smooth updates
    */
   private tick = (): void => {
-    const now = performance.now();
     const elapsedSeconds = this.getElapsedSeconds();
 
     // Only update UI when seconds actually change to avoid unnecessary updates
     if (elapsedSeconds !== this.lastDisplayedSeconds) {
-      const formattedTime = this.formatTime(elapsedSeconds);
+      const formattedTime = formatTime(elapsedSeconds);
       this.onTimeUpdate(formattedTime);
       this.lastDisplayedSeconds = elapsedSeconds;
     }
@@ -70,16 +67,7 @@ export class TimerManager {
    * Get formatted elapsed time string
    */
   getFormattedElapsedTime(): string {
-    return this.formatTime(this.getElapsedSeconds());
-  }
-
-  /**
-   * Format seconds into MM:SS format
-   */
-  formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return formatTime(this.getElapsedSeconds());
   }
 
   /**
@@ -105,6 +93,6 @@ export class TimerManager {
     this.stop();
     this.startTime = null;
     this.lastDisplayedSeconds = -1;
-    this.onTimeUpdate(this.formatTime(0));
+    this.onTimeUpdate(formatTime(0));
   }
 }
