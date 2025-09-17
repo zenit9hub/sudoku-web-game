@@ -29,8 +29,8 @@ export class SudokuGeneratorService {
     // 1. 완전한 해답 생성 (백트래킹으로 항상 성공)
     const completeSolution = this.generateCompleteSolution();
 
-    // 2. 패턴 변형으로 랜덤화
-    const randomizedSolution = this.randomizePattern(completeSolution);
+    // 2. 간단한 숫자 치환만으로 랜덤화
+    const randomizedSolution = this.substituteNumbers(completeSolution);
 
     // 3. 난이도에 따라 셀 제거하여 퍼즐 생성
     return this.removeCells(randomizedSolution, difficulty, options.useSymmetricRemoval);
@@ -88,106 +88,39 @@ export class SudokuGeneratorService {
     return null; // 백트래킹
   }
 
-  private randomizePattern(grid: SudokuGrid): SudokuGrid {
-    let randomizedGrid = grid;
-    
-    // 1. 숫자 치환
-    randomizedGrid = this.substituteNumbers(randomizedGrid);
-    
-    // 2. 행 교환 (같은 3x3 블록 내에서)
-    randomizedGrid = this.swapRows(randomizedGrid);
-    
-    // 3. 열 교환 (같은 3x3 블록 내에서)
-    randomizedGrid = this.swapColumns(randomizedGrid);
-    
-    // 4. 3x3 블록 교환
-    randomizedGrid = this.swapBoxes(randomizedGrid);
-    
-    return randomizedGrid;
-  }
 
-  private removeCells(grid: SudokuGrid, difficulty: Difficulty, symmetric = false): SudokuGrid {
+  private removeCells(grid: SudokuGrid, difficulty: Difficulty, _symmetric = false): SudokuGrid {
     const cellsToRemove = this.getCellsToRemove(difficulty);
     const positions = this.getAllPositions();
     const shuffledPositions = this.shuffleArray(positions);
-    
+
     let currentGrid = grid;
     let removedCount = 0;
-    
+
     for (const position of shuffledPositions) {
       if (removedCount >= cellsToRemove) break;
-      
+
       const originalCell = currentGrid.getCell(position);
       if (originalCell.isEmpty()) continue;
-      
-      // 셀 제거 시도
-      const testGrid = currentGrid.setCell(position, CellValue.empty());
-      
-      // 대칭 제거 옵션
-      if (symmetric) {
-        const symmetricPos = new Position(8 - position.row, 8 - position.col);
-        const symmetricGrid = testGrid.setCell(symmetricPos, CellValue.empty());
-        
-        if (this.hasUniqueSolution(symmetricGrid)) {
-          currentGrid = symmetricGrid;
-          removedCount += 2;
-          continue;
-        }
-      }
-      
-      // 일반 제거
-      if (this.hasUniqueSolution(testGrid)) {
-        currentGrid = testGrid;
-        removedCount++;
-      }
+
+      // 단순한 셀 제거 (유니크해 검증 없음)
+      currentGrid = currentGrid.setCell(position, CellValue.empty());
+      removedCount++;
     }
-    
+
     return this.markGivenCells(currentGrid);
   }
 
   private getCellsToRemove(difficulty: Difficulty): number {
     switch (difficulty) {
-      case Difficulty.EASY: return this.randomRange(35, 40);
-      case Difficulty.MEDIUM: return this.randomRange(41, 47);
-      case Difficulty.HARD: return this.randomRange(48, 54);
-      case Difficulty.EXPERT: return this.randomRange(55, 64);
-      default: return 45;
+      case Difficulty.EASY: return 38;     // 43개 주어진 숫자
+      case Difficulty.MEDIUM: return 44;   // 37개 주어진 숫자
+      case Difficulty.HARD: return 50;     // 31개 주어진 숫자
+      case Difficulty.EXPERT: return 57;   // 24개 주어진 숫자
+      default: return 44;
     }
   }
 
-  private hasUniqueSolution(grid: SudokuGrid): boolean {
-    // 간단한 유일해 검증 (실제로는 더 복잡한 알고리즘 필요)
-    const solutions = this.countSolutions(grid, 2); // 최대 2개까지만 확인
-    return solutions === 1;
-  }
-
-  private countSolutions(grid: SudokuGrid, maxCount: number): number {
-    const emptyCells = this.getEmptyCells(grid);
-    
-    if (emptyCells.length === 0) {
-      return 1; // 완성된 해답
-    }
-
-    if (maxCount <= 0) {
-      return 0;
-    }
-
-    const position = emptyCells[0];
-    const possibleValues = this.validationService.getPossibleValues(grid, position);
-    
-    let solutionCount = 0;
-    
-    for (const value of possibleValues) {
-      const newGrid = grid.setCell(position, value);
-      solutionCount += this.countSolutions(newGrid, maxCount - solutionCount);
-      
-      if (solutionCount >= maxCount) {
-        break;
-      }
-    }
-    
-    return solutionCount;
-  }
 
   // 유틸리티 메서드들
   private shuffleArray<T>(array: T[]): T[] {
@@ -199,9 +132,6 @@ export class SudokuGeneratorService {
     return shuffled;
   }
 
-  private randomRange(min: number, max: number): number {
-    return Math.floor(this.random() * (max - min + 1)) + min;
-  }
 
   private createSeededRandom(seed: number): () => number {
     let state = seed;
@@ -297,74 +227,5 @@ export class SudokuGeneratorService {
     return substitution;
   }
 
-  private swapRows(grid: SudokuGrid): SudokuGrid {
-    // 같은 3x3 블록 내에서 행 교환
-    const cells = this.getGridCells(grid);
-    
-    for (let blockRow = 0; blockRow < 3; blockRow++) {
-      if (this.random() < 0.5) continue;
-      
-      const startRow = blockRow * 3;
-      const row1 = startRow + Math.floor(this.random() * 3);
-      const row2 = startRow + Math.floor(this.random() * 3);
-      
-      if (row1 !== row2) {
-        [cells[row1], cells[row2]] = [cells[row2], cells[row1]];
-        
-        // Position 업데이트
-        for (let col = 0; col < 9; col++) {
-          cells[row1][col] = new Cell(new Position(row1, col), cells[row1][col].value, { isGiven: false });
-          cells[row2][col] = new Cell(new Position(row2, col), cells[row2][col].value, { isGiven: false });
-        }
-      }
-    }
-    
-    return new SudokuGrid(cells);
-  }
-
-  private swapColumns(grid: SudokuGrid): SudokuGrid {
-    // 같은 3x3 블록 내에서 열 교환
-    const cells = this.getGridCells(grid);
-    
-    for (let blockCol = 0; blockCol < 3; blockCol++) {
-      if (this.random() < 0.5) continue;
-      
-      const startCol = blockCol * 3;
-      const col1 = startCol + Math.floor(this.random() * 3);
-      const col2 = startCol + Math.floor(this.random() * 3);
-      
-      if (col1 !== col2) {
-        for (let row = 0; row < 9; row++) {
-          [cells[row][col1], cells[row][col2]] = [cells[row][col2], cells[row][col1]];
-          
-          // Position 업데이트
-          cells[row][col1] = new Cell(new Position(row, col1), cells[row][col1].value, { isGiven: false });
-          cells[row][col2] = new Cell(new Position(row, col2), cells[row][col2].value, { isGiven: false });
-        }
-      }
-    }
-    
-    return new SudokuGrid(cells);
-  }
-
-  private swapBoxes(grid: SudokuGrid): SudokuGrid {
-    // 3x3 블록 교환
-    const cells = this.getGridCells(grid);
-    
-    // 행 방향 블록 교환
-    if (this.random() < 0.3) {
-      const block1 = Math.floor(this.random() * 3);
-      const block2 = Math.floor(this.random() * 3);
-      
-      if (block1 !== block2) {
-        for (let row = 0; row < 3; row++) {
-          [cells[block1 * 3 + row], cells[block2 * 3 + row]] = 
-          [cells[block2 * 3 + row], cells[block1 * 3 + row]];
-        }
-      }
-    }
-    
-    return new SudokuGrid(cells);
-  }
 
 }
