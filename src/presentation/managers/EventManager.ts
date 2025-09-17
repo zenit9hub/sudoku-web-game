@@ -69,7 +69,10 @@ class CanvasEventHandler {
       calculated: { x, y }
     });
 
-    this.gameController.handleCellClick(x, y);
+    // Use setTimeout to make cell click async and prevent UI blocking
+    setTimeout(() => {
+      this.gameController.handleCellClick(x, y);
+    }, 0);
   };
 
   attachEvents(): void {
@@ -89,9 +92,15 @@ class KeyboardEventHandler {
 
   private handleKeyDown = (event: KeyboardEvent): void => {
     if (this.isNumberKey(event.key)) {
-      this.gameController.handleNumberInput(parseInt(event.key));
+      // Use setTimeout to make keyboard input async and prevent UI blocking
+      setTimeout(() => {
+        this.gameController.handleNumberInput(parseInt(event.key));
+      }, 0);
     } else if (this.isClearKey(event.key)) {
-      this.gameController.handleClearCell();
+      // Use setTimeout to make clear cell async and prevent UI blocking
+      setTimeout(() => {
+        this.gameController.handleClearCell();
+      }, 0);
     }
   };
 
@@ -126,10 +135,18 @@ class ButtonEventHandler {
   }
 
   private setupEventHandlers(): void {
-    this.eventHandlers.set(DOM_SELECTORS.NEW_GAME_BTN, () => this.handleNewGame());
-    this.eventHandlers.set(DOM_SELECTORS.RESET_GAME_BTN, () => this.gameController.handleReset());
-    this.eventHandlers.set(DOM_SELECTORS.HINT_BTN, () => this.gameController.handleHint());
-    this.eventHandlers.set(DOM_SELECTORS.CLEAR_CELL_BTN, () => this.gameController.handleClearCell());
+    this.eventHandlers.set(DOM_SELECTORS.NEW_GAME_BTN, () => {
+      setTimeout(() => this.handleNewGame(), 0);
+    });
+    this.eventHandlers.set(DOM_SELECTORS.RESET_GAME_BTN, () => {
+      setTimeout(() => this.gameController.handleReset(), 0);
+    });
+    this.eventHandlers.set(DOM_SELECTORS.HINT_BTN, () => {
+      setTimeout(() => this.gameController.handleHint(), 0);
+    });
+    this.eventHandlers.set(DOM_SELECTORS.CLEAR_CELL_BTN, () => {
+      setTimeout(() => this.gameController.handleClearCell(), 0);
+    });
   }
 
   private async handleNewGame(): Promise<void> {
@@ -142,7 +159,10 @@ class ButtonEventHandler {
     const target = event.target as HTMLButtonElement;
     const number = parseInt(target.dataset.number || '0');
     if (number >= 1 && number <= 9) {
-      this.gameController.handleNumberInput(number);
+      // Use setTimeout to make number button click async and prevent UI blocking
+      setTimeout(() => {
+        this.gameController.handleNumberInput(number);
+      }, 0);
     }
   };
 

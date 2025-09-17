@@ -3,11 +3,13 @@ import { APP_CONFIG } from '../config/AppConfig';
 
 /**
  * Manages game timer functionality
- * Handles timer lifecycle, time calculation, and formatting
+ * Uses requestAnimationFrame for smoother, independent timer updates
  */
 export class TimerManager {
-  private intervalId: number | null = null;
+  private animationFrameId: number | null = null;
   private startTime: Date | null = null;
+  private lastUpdateTime: number = 0;
+  private lastDisplayedSeconds: number = -1;
 
   constructor(private onTimeUpdate: (formattedTime: string) => void) {}
 
@@ -15,25 +17,46 @@ export class TimerManager {
    * Start the timer for a game
    */
   start(game: SudokuGame): void {
+    // Don't restart if already running with the same start time
+    if (this.isRunning() && this.startTime &&
+        this.startTime.getTime() === game.state.statistics.startTime.getTime()) {
+      return;
+    }
+
     this.stop(); // Clear any existing timer
     this.startTime = game.state.statistics.startTime;
-
-    this.intervalId = window.setInterval(() => {
-      const elapsedSeconds = this.getElapsedSeconds();
-      const formattedTime = this.formatTime(elapsedSeconds);
-      this.onTimeUpdate(formattedTime);
-    }, APP_CONFIG.TIMER.UPDATE_INTERVAL);
+    this.lastUpdateTime = performance.now();
+    this.lastDisplayedSeconds = -1;
+    this.tick();
   }
 
   /**
    * Stop the timer
    */
   stop(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
     }
   }
+
+  /**
+   * Timer tick using requestAnimationFrame for smooth updates
+   */
+  private tick = (): void => {
+    const now = performance.now();
+    const elapsedSeconds = this.getElapsedSeconds();
+
+    // Only update UI when seconds actually change to avoid unnecessary updates
+    if (elapsedSeconds !== this.lastDisplayedSeconds) {
+      const formattedTime = this.formatTime(elapsedSeconds);
+      this.onTimeUpdate(formattedTime);
+      this.lastDisplayedSeconds = elapsedSeconds;
+    }
+
+    // Continue the timer loop
+    this.animationFrameId = requestAnimationFrame(this.tick);
+  };
 
   /**
    * Get current elapsed seconds
@@ -63,7 +86,7 @@ export class TimerManager {
    * Check if timer is currently running
    */
   isRunning(): boolean {
-    return this.intervalId !== null;
+    return this.animationFrameId !== null;
   }
 
   /**
@@ -81,6 +104,7 @@ export class TimerManager {
   reset(): void {
     this.stop();
     this.startTime = null;
+    this.lastDisplayedSeconds = -1;
     this.onTimeUpdate(this.formatTime(0));
   }
 }
