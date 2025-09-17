@@ -8,7 +8,8 @@ import { SudokuGrid } from '../../domain/models/SudokuGrid';
 import { Position } from '../../domain/models/Position';
 import { CellValue } from '../../domain/models/CellValue';
 import { Cell } from '../../domain/models/Cell';
-import { GameState, Difficulty } from '../../domain/models/GameState';
+import { GameState, Difficulty, GameStatus } from '../../domain/models/GameState';
+import { create9x9Grid } from '../../utils/index';
 
 /**
  * Create a test game instance with predefined state
@@ -20,26 +21,23 @@ export function createTestGame(options: {
 }): SudokuGame {
   const { difficulty = Difficulty.EASY, filled = false, completed = false } = options;
 
-  // Create a simple test grid
-  const cells: Cell[][] = [];
-  for (let row = 0; row < 9; row++) {
-    cells[row] = [];
-    for (let col = 0; col < 9; col++) {
-      const value = filled || completed ? new CellValue((row * 9 + col) % 9 + 1) : CellValue.empty();
-      const isGiven = row < 3; // First 3 rows are given
-      cells[row][col] = new Cell(value, isGiven);
-    }
-  }
+  // Create a simple test grid using the utility function
+  const cells = create9x9Grid((row, col) => {
+    const position = new Position(row, col);
+    const value = filled || completed ? CellValue.from((row * 9 + col) % 9 + 1) : CellValue.empty();
+    const isGiven = row < 3; // First 3 rows are given
+    return new Cell(position, value, { isGiven });
+  });
 
   const grid = new SudokuGrid(cells);
-  const state = new GameState(
-    grid,
-    difficulty,
-    { moves: 0, hints: 0, startTime: new Date() },
-    completed ? 'completed' : 'playing'
-  );
+  const gameId = `test-game-${Date.now()}`;
 
-  return new SudokuGame(grid, state);
+  const state = GameState.create(gameId, difficulty);
+  if (completed) {
+    state.complete();
+  }
+
+  return SudokuGame.create(gameId, grid, state);
 }
 
 /**

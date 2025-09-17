@@ -48,40 +48,50 @@ export class MockGameRenderer implements GameRenderer {
  */
 export class MockGameRepository implements GameRepository {
   private storage: Map<string, SudokuGame> = new Map();
-  public saveCalls: Array<{ key: string; game: SudokuGame }> = [];
-  public loadCalls: Array<{ key: string }> = [];
+  private gameStateStorage: Map<string, any> = new Map();
+  public saveCalls: Array<{ game: SudokuGame }> = [];
+  public loadCalls: Array<{ gameId: string }> = [];
 
-  async saveGame(key: string, game: SudokuGame): Promise<void> {
-    this.saveCalls.push({ key, game });
-    this.storage.set(key, game);
+  async save(game: SudokuGame): Promise<void> {
+    this.saveCalls.push({ game });
+    this.storage.set(game.id, game);
   }
 
-  async loadGame(key: string): Promise<SudokuGame | null> {
-    this.loadCalls.push({ key });
-    return this.storage.get(key) || null;
+  async load(gameId: string): Promise<SudokuGame | null> {
+    this.loadCalls.push({ gameId });
+    return this.storage.get(gameId) || null;
   }
 
-  async deleteGame(key: string): Promise<void> {
-    this.storage.delete(key);
+  async delete(gameId: string): Promise<void> {
+    this.storage.delete(gameId);
   }
 
-  async listGames(): Promise<string[]> {
+  async getAllGameIds(): Promise<string[]> {
     return Array.from(this.storage.keys());
+  }
+
+  async saveGameState(gameId: string, state: any): Promise<void> {
+    this.gameStateStorage.set(gameId, state);
+  }
+
+  async loadGameState(gameId: string): Promise<any | null> {
+    return this.gameStateStorage.get(gameId) || null;
   }
 
   /**
    * Test helper methods
    */
-  hasGame(key: string): boolean {
-    return this.storage.has(key);
+  hasGame(gameId: string): boolean {
+    return this.storage.has(gameId);
   }
 
-  getStoredGame(key: string): SudokuGame | undefined {
-    return this.storage.get(key);
+  getStoredGame(gameId: string): SudokuGame | undefined {
+    return this.storage.get(gameId);
   }
 
   reset(): void {
     this.storage.clear();
+    this.gameStateStorage.clear();
     this.saveCalls = [];
     this.loadCalls = [];
   }
@@ -119,6 +129,16 @@ export class MockDOMElementManager {
     this.updateStyleCalls.push({ elementId, property: property.toString(), value });
     const element = this.getElement(elementId);
     (element.style as any)[property] = value;
+  }
+
+  updateStyles(elementId: string, styles: Partial<CSSStyleDeclaration>): void {
+    Object.entries(styles).forEach(([property, value]) => {
+      if (value !== undefined) {
+        this.updateStyleCalls.push({ elementId, property, value });
+        const element = this.getElement(elementId);
+        (element.style as any)[property] = value;
+      }
+    });
   }
 
   /**
