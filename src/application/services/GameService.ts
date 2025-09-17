@@ -3,11 +3,9 @@ import { SudokuGrid } from '../../domain/models/SudokuGrid';
 import { GameState, Difficulty } from '../../domain/models/GameState';
 import { Position } from '../../domain/models/Position';
 import { CellValue } from '../../domain/models/CellValue';
-import { Cell } from '../../domain/models/Cell';
 import { SudokuValidationService } from '../../domain/services/SudokuValidationService';
 import { SudokuGeneratorService } from '../../domain/services/SudokuGeneratorService';
 import { GameRepository } from '../../infrastructure/interfaces/GameRepository';
-import { create9x9Grid } from '../../utils/index';
 
 export interface MoveResult {
   success: boolean;
@@ -171,113 +169,18 @@ export class GameService {
 
   private async generateSudokuGrid(difficulty: Difficulty): Promise<SudokuGrid> {
     console.log(`Generating new ${difficulty} puzzle...`);
-    
-    try {
-      // 새로운 랜덤 시드로 생성기 초기화
-      const seed = Date.now() + Math.random() * 1000000;
-      const generator = new SudokuGeneratorService(seed);
-      
-      // 난이도에 따른 퍼즐 생성
-      const puzzle = generator.generatePuzzle(difficulty, {
-        maxAttempts: 5,
-        useSymmetricRemoval: difficulty === Difficulty.EASY // Easy는 대칭 제거로 더 예쁘게
-      });
-      
-      console.log(`Successfully generated ${difficulty} puzzle with seed: ${seed}`);
-      return puzzle;
-      
-    } catch (error) {
-      console.error('Failed to generate puzzle, using fallback:', error);
-      return this.getFallbackPuzzle(difficulty);
-    }
-  }
 
-  private getFallbackPuzzle(difficulty: Difficulty): SudokuGrid {
-    // 난이도별 기본 퍼즐
-    const puzzles = {
-      [Difficulty.EASY]: [
-        [5, 3, 4, 6, 7, 8, 9, 1, 2],
-        [6, 7, 2, 1, 9, 5, 3, 4, 8],
-        [1, 9, 8, 3, 4, 2, 5, 6, 7],
-        [8, 5, 9, 7, 6, 1, 4, 2, 3],
-        [4, 2, 6, 8, 5, 3, 7, 9, 1],
-        [7, 1, 3, 9, 2, 4, 8, 5, 6],
-        [9, 6, 1, 5, 3, 7, 2, 8, 4],
-        [2, 8, 7, 4, 1, 9, 6, 3, 5],
-        [3, 4, 5, 2, 8, 6, 1, 7, 9]
-      ],
-      [Difficulty.MEDIUM]: [
-        [5, 3, 0, 0, 7, 0, 0, 0, 0],
-        [6, 0, 0, 1, 9, 5, 0, 0, 0],
-        [0, 9, 8, 0, 0, 0, 0, 6, 0],
-        [8, 0, 0, 0, 6, 0, 0, 0, 3],
-        [4, 0, 0, 8, 0, 3, 0, 0, 1],
-        [7, 0, 0, 0, 2, 0, 0, 0, 6],
-        [0, 6, 0, 0, 0, 0, 2, 8, 0],
-        [0, 0, 0, 4, 1, 9, 0, 0, 5],
-        [0, 0, 0, 0, 8, 0, 0, 7, 9]
-      ],
-      [Difficulty.HARD]: [
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [4, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 6, 0, 2],
-        [0, 0, 0, 0, 0, 3, 0, 7, 0],
-        [5, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0]
-      ],
-      [Difficulty.EXPERT]: [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 3, 0, 8, 5],
-        [0, 0, 1, 0, 2, 0, 0, 0, 0],
-        [0, 0, 0, 5, 0, 7, 0, 0, 0],
-        [0, 0, 4, 0, 0, 0, 1, 0, 0],
-        [0, 9, 0, 0, 0, 0, 0, 0, 0],
-        [5, 0, 0, 0, 0, 0, 0, 7, 3],
-        [0, 0, 2, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 4, 0, 0, 0, 9]
-      ]
-    };
+    // 새로운 랜덤 시드로 생성기 초기화
+    const seed = Date.now() + Math.random() * 1000000;
+    const generator = new SudokuGeneratorService(seed);
 
-    const puzzle = puzzles[difficulty];
-    
-    // Easy 난이도는 더 많은 숫자 제공
-    if (difficulty === Difficulty.EASY) {
-      const easyPuzzle = puzzle.map(row => [...row]);
-      // 일부 숫자 제거 (40개 정도 남김)
-      const cellsToRemove = 41;
-      let removed = 0;
-      
-      while (removed < cellsToRemove) {
-        const row = Math.floor(Math.random() * 9);
-        const col = Math.floor(Math.random() * 9);
-        if (easyPuzzle[row][col] !== 0) {
-          easyPuzzle[row][col] = 0;
-          removed++;
-        }
-      }
-      
-      return this.createGridFromArray(easyPuzzle);
-    }
-
-    return this.createGridFromArray(puzzle);
-  }
-
-  private createGridFromArray(puzzleArray: number[][]): SudokuGrid {
-    const cells = create9x9Grid((row, col) => {
-        const position = new Position(row, col);
-        const puzzleValue = puzzleArray[row][col];
-        
-        if (puzzleValue !== 0) {
-          const value = CellValue.from(puzzleValue);
-          return new Cell(position, value, { isGiven: true });
-        } else {
-          return new Cell(position, CellValue.empty(), { isGiven: false });
-        }
+    // 난이도에 따른 퍼즐 생성
+    const puzzle = generator.generatePuzzle(difficulty, {
+      useSymmetricRemoval: difficulty === Difficulty.EASY // Easy는 대칭 제거로 더 예쁘게
     });
 
-    return new SudokuGrid(cells);
+    console.log(`Successfully generated ${difficulty} puzzle with seed: ${seed}`);
+    return puzzle;
   }
+
 }

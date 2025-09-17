@@ -7,7 +7,6 @@ import { SudokuValidationService } from './SudokuValidationService';
 
 export interface GenerationOptions {
   seed?: number;
-  maxAttempts?: number;
   useSymmetricRemoval?: boolean;
 }
 
@@ -27,31 +26,14 @@ export class SudokuGeneratorService {
   }
 
   generatePuzzle(difficulty: Difficulty, options: GenerationOptions = {}): SudokuGrid {
-    const maxAttempts = options.maxAttempts || 10;
-    
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      try {
-        // 1. 완전한 해답 생성
-        const completeSolution = this.generateCompleteSolution();
-        
-        // 2. 패턴 변형으로 랜덤화
-        const randomizedSolution = this.randomizePattern(completeSolution);
-        
-        // 3. 난이도에 따라 셀 제거
-        const puzzle = this.removeCells(randomizedSolution, difficulty, options.useSymmetricRemoval);
-        
-        // 4. 유효성 검증 (유일한 해답인지 확인)
-        if (this.hasUniqueSolution(puzzle)) {
-          return puzzle;
-        }
-      } catch (error) {
-        console.warn(`Generation attempt ${attempt + 1} failed:`, error);
-      }
-    }
-    
-    // 실패 시 기본 퍼즐 반환
-    console.warn('Failed to generate puzzle, returning fallback');
-    return this.getFallbackPuzzle(difficulty);
+    // 1. 완전한 해답 생성 (백트래킹으로 항상 성공)
+    const completeSolution = this.generateCompleteSolution();
+
+    // 2. 패턴 변형으로 랜덤화
+    const randomizedSolution = this.randomizePattern(completeSolution);
+
+    // 3. 난이도에 따라 셀 제거하여 퍼즐 생성
+    return this.removeCells(randomizedSolution, difficulty, options.useSymmetricRemoval);
   }
 
   private generateCompleteSolution(): SudokuGrid {
@@ -385,34 +367,4 @@ export class SudokuGeneratorService {
     return new SudokuGrid(cells);
   }
 
-  private getFallbackPuzzle(_difficulty: Difficulty): SudokuGrid {
-    // 실패 시 기본 퍼즐 반환
-    const easyPuzzle = [
-      [5, 3, 0, 0, 7, 0, 0, 0, 0],
-      [6, 0, 0, 1, 9, 5, 0, 0, 0],
-      [0, 9, 8, 0, 0, 0, 0, 6, 0],
-      [8, 0, 0, 0, 6, 0, 0, 0, 3],
-      [4, 0, 0, 8, 0, 3, 0, 0, 1],
-      [7, 0, 0, 0, 2, 0, 0, 0, 6],
-      [0, 6, 0, 0, 0, 0, 2, 8, 0],
-      [0, 0, 0, 4, 1, 9, 0, 0, 5],
-      [0, 0, 0, 0, 8, 0, 0, 7, 9]
-    ];
-
-    const cells = Array.from({ length: 9 }, (_, row) =>
-      Array.from({ length: 9 }, (_, col) => {
-        const position = new Position(row, col);
-        const puzzleValue = easyPuzzle[row][col];
-        
-        if (puzzleValue !== 0) {
-          const value = CellValue.from(puzzleValue);
-          return new Cell(position, value, { isGiven: true });
-        } else {
-          return new Cell(position, CellValue.empty(), { isGiven: false });
-        }
-      })
-    );
-
-    return new SudokuGrid(cells);
-  }
 }
