@@ -1,0 +1,45 @@
+/* Responsive Layout Utilities */
+
+/* Flexible sizing utilities */
+.flex-container {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  justify-content: space-between;
+}
+
+.flex-around {
+  justify-content: space-around;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+/* Text alignment utilities */
+.text-center {
+  text-align: center;
+}
+
+/* Responsive spacing */
+@media (max-width: 480px) {
+  .game-wrapper {
+    padding: min(2vw, 16px);
+  }
+}
+
+@media (max-width: 360px) {
+  .game-wrapper {
+    padding: min(1.5vw, 12px);
+  }
+}

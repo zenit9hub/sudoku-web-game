@@ -1,9 +1,9 @@
-import { GameRenderer, RenderOptions } from '../interfaces/GameRenderer.js';
-import { SudokuGame } from '../../domain/models/SudokuGame.js';
-import { Position } from '../../domain/models/Position.js';
-import { Cell } from '../../domain/models/Cell.js';
-import { BoardRenderer, BoardRenderOptions } from './BoardRenderer.js';
-import { SelectionEffectsRenderer, SelectionRenderOptions } from './SelectionEffectsRenderer.js';
+import { GameRenderer, RenderOptions } from '../interfaces/GameRenderer';
+import { SudokuGame } from '../../domain/models/SudokuGame';
+import { Position } from '../../domain/models/Position';
+import { Cell } from '../../domain/models/Cell';
+import { BoardRenderer, BoardRenderOptions } from './BoardRenderer';
+import { SelectionEffectsRenderer, SelectionRenderOptions } from './SelectionEffectsRenderer';
 
 export class CanvasGameRenderer implements GameRenderer {
   private ctx: CanvasRenderingContext2D;

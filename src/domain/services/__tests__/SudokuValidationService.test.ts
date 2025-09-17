@@ -1,7 +1,7 @@
-import { SudokuValidationService } from '../SudokuValidationService.js';
-import { SudokuGrid } from '../../models/SudokuGrid.js';
-import { Position } from '../../models/Position.js';
-import { CellValue } from '../../models/CellValue.js';
+import { SudokuValidationService } from '../SudokuValidationService';
+import { SudokuGrid } from '../../models/SudokuGrid';
+import { Position } from '../../models/Position';
+import { CellValue } from '../../models/CellValue';
 
 describe('SudokuValidationService', () => {
   let validationService: SudokuValidationService;

@@ -1,0 +1,22 @@
+/* Game Canvas Component */
+
+.game-main {
+  width: 100%;
+  height: var(--main-height);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--bg-section);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+#gameCanvas {
+  width: 88%;
+  height: 88%;
+  border: var(--border-width) solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-canvas);
+  background: var(--bg-container);
+}

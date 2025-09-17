@@ -7,21 +7,15 @@ export default {
     '**/*.test.ts',
     '**/*.spec.ts'
   ],
-  transform: {
-    '^.+\\.ts$': 'ts-jest',
-  },
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@/domain/(.*)$': '<rootDir>/src/domain/$1',
     '^@/application/(.*)$': '<rootDir>/src/application/$1',
     '^@/infrastructure/(.*)$': '<rootDir>/src/infrastructure/$1',
-    '^@/presentation/(.*)$': '<rootDir>/src/presentation/$1',
+    '^@/presentation/(.*)$': '<rootDir>/src/presentation/$1'
   },
-  extensionsToTreatAsEsm: ['.ts'],
-  globals: {
-    'ts-jest': {
-      useESM: true
-    }
+  transform: {
+    '^.+\\.ts$': 'ts-jest',
   },
   collectCoverageFrom: [
     'src/**/*.ts',

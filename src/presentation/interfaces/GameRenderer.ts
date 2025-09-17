@@ -1,5 +1,5 @@
-import { SudokuGame } from '../../domain/models/SudokuGame.js';
-import { Position } from '../../domain/models/Position.js';
+import { SudokuGame } from '../../domain/models/SudokuGame';
+import { Position } from '../../domain/models/Position';
 
 export interface RenderOptions {
   highlightErrors: boolean;

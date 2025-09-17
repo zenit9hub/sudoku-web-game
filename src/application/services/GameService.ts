@@ -1,12 +1,12 @@
-import { SudokuGame } from '../../domain/models/SudokuGame.js';
-import { SudokuGrid } from '../../domain/models/SudokuGrid.js';
-import { GameState, Difficulty } from '../../domain/models/GameState.js';
-import { Position } from '../../domain/models/Position.js';
-import { CellValue } from '../../domain/models/CellValue.js';
-import { Cell } from '../../domain/models/Cell.js';
-import { SudokuValidationService } from '../../domain/services/SudokuValidationService.js';
-import { SudokuGeneratorService } from '../../domain/services/SudokuGeneratorService.js';
-import { GameRepository } from '../../infrastructure/interfaces/GameRepository.js';
+import { SudokuGame } from '../../domain/models/SudokuGame';
+import { SudokuGrid } from '../../domain/models/SudokuGrid';
+import { GameState, Difficulty } from '../../domain/models/GameState';
+import { Position } from '../../domain/models/Position';
+import { CellValue } from '../../domain/models/CellValue';
+import { Cell } from '../../domain/models/Cell';
+import { SudokuValidationService } from '../../domain/services/SudokuValidationService';
+import { SudokuGeneratorService } from '../../domain/services/SudokuGeneratorService';
+import { GameRepository } from '../../infrastructure/interfaces/GameRepository';
 
 export interface MoveResult {
   success: boolean;

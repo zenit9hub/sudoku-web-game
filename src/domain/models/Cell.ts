@@ -1,5 +1,5 @@
-import { CellValue } from './CellValue.js';
-import { Position } from './Position.js';
+import { CellValue } from './CellValue';
+import { Position } from './Position';
 
 export interface CellOptions {
   isGiven?: boolean;

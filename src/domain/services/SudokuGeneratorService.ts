@@ -1,9 +1,9 @@
-import { SudokuGrid } from '../models/SudokuGrid.js';
-import { Cell } from '../models/Cell.js';
-import { Position } from '../models/Position.js';
-import { CellValue } from '../models/CellValue.js';
-import { Difficulty } from '../models/GameState.js';
-import { SudokuValidationService } from './SudokuValidationService.js';
+import { SudokuGrid } from '../models/SudokuGrid';
+import { Cell } from '../models/Cell';
+import { Position } from '../models/Position';
+import { CellValue } from '../models/CellValue';
+import { Difficulty } from '../models/GameState';
+import { SudokuValidationService } from './SudokuValidationService';
 
 export interface GenerationOptions {
   seed?: number;

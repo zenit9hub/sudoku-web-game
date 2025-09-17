@@ -1,6 +1,6 @@
-import { Cell } from './Cell.js';
-import { Position } from './Position.js';
-import { CellValue } from './CellValue.js';
+import { Cell } from './Cell';
+import { Position } from './Position';
+import { CellValue } from './CellValue';
 
 export class SudokuGrid {
   private static readonly GRID_SIZE = 9;

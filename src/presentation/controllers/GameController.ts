@@ -1,9 +1,9 @@
-import { GameService } from '../../application/services/GameService.js';
-import { GameRenderer } from '../interfaces/GameRenderer.js';
-import { SudokuGame } from '../../domain/models/SudokuGame.js';
-import { Position } from '../../domain/models/Position.js';
-import { CellValue } from '../../domain/models/CellValue.js';
-import { Difficulty } from '../../domain/models/GameState.js';
+import { GameService } from '../../application/services/GameService';
+import { GameRenderer } from '../interfaces/GameRenderer';
+import { SudokuGame } from '../../domain/models/SudokuGame';
+import { Position } from '../../domain/models/Position';
+import { CellValue } from '../../domain/models/CellValue';
+import { Difficulty } from '../../domain/models/GameState';
 
 export interface GameControllerEvents {
   onGameUpdate: (game: SudokuGame) => void;

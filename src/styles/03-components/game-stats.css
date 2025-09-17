@@ -1,0 +1,57 @@
+/* Game Stats Component */
+
+.game-stats {
+  width: 100%;
+  height: var(--stats-height);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  background: var(--bg-section);
+  border-top: 1px solid var(--border-section);
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Stats row layout */
+.stats-row {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+/* Individual info items */
+.info-item {
+  text-align: center;
+  width: 29.4%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 0;
+  height: 35%;
+  line-height: 35%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-value {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  color: var(--text-primary);
+  height: 45%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
