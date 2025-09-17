@@ -100,6 +100,7 @@ class SudokuApp {
   private handleGameUpdate(game: SudokuGame): void {
     this.uiManager.updateGameInfo(game);
     this.uiManager.updateSelectionInfo(game);
+    this.uiManager.updateNumberButtons(game);
     this.timerManager.start(game);
   }
 

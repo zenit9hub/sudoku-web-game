@@ -166,6 +166,41 @@ export class UIManager {
   }
 
   /**
+   * Update number button counts and states
+   */
+  updateNumberButtons(game: SudokuGame): void {
+    const remainingCounts = game.grid.getRemainingCounts();
+
+    for (let num = 1; num <= 9; num++) {
+      const remaining = remainingCounts.get(num) || 0;
+      const buttonSelector = `[data-number="${num}"]`;
+      const countSelector = `[data-number="${num}"] .number-count`;
+
+      try {
+        // Update count display
+        const countElement = document.querySelector(countSelector) as HTMLElement;
+        if (countElement) {
+          countElement.textContent = remaining.toString();
+        }
+
+        // Update button state
+        const buttonElement = document.querySelector(buttonSelector) as HTMLButtonElement;
+        if (buttonElement) {
+          if (remaining === 0) {
+            buttonElement.disabled = true;
+            buttonElement.setAttribute('aria-disabled', 'true');
+          } else {
+            buttonElement.disabled = false;
+            buttonElement.removeAttribute('aria-disabled');
+          }
+        }
+      } catch (error) {
+        console.warn(`Failed to update number button ${num}:`, error);
+      }
+    }
+  }
+
+  /**
    * Reset all UI to initial state
    */
   resetUI(): void {
@@ -188,5 +223,26 @@ export class UIManager {
         style: { color: UI_COLORS.INFO }
       }
     ]);
+
+    // Reset number button counts and enable all buttons
+    for (let num = 1; num <= 9; num++) {
+      const buttonSelector = `[data-number="${num}"]`;
+      const countSelector = `[data-number="${num}"] .number-count`;
+
+      try {
+        const countElement = document.querySelector(countSelector) as HTMLElement;
+        if (countElement) {
+          countElement.textContent = '9';
+        }
+
+        const buttonElement = document.querySelector(buttonSelector) as HTMLButtonElement;
+        if (buttonElement) {
+          buttonElement.disabled = false;
+          buttonElement.removeAttribute('aria-disabled');
+        }
+      } catch (error) {
+        console.warn(`Failed to reset number button ${num}:`, error);
+      }
+    }
   }
 }

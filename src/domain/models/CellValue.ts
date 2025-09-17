@@ -30,4 +30,11 @@ export class CellValue {
   toString(): string {
     return this.value?.toString() ?? '';
   }
+
+  toNumber(): number {
+    if (this.value === null) {
+      throw new Error('Cannot convert empty cell value to number');
+    }
+    return this.value;
+  }
 }

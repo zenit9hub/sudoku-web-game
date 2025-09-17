@@ -98,4 +98,41 @@ export class SudokuGrid {
   getFilledCells(): Cell[] {
     return this.getAllCells().filter(cell => !cell.isEmpty());
   }
+
+  /**
+   * Get count of each number (1-9) currently placed in the grid
+   */
+  getNumberCounts(): Map<number, number> {
+    const counts = new Map<number, number>();
+
+    // Initialize counts for numbers 1-9
+    for (let i = 1; i <= 9; i++) {
+      counts.set(i, 0);
+    }
+
+    // Count occurrences of each number
+    this.getAllCells().forEach(cell => {
+      if (!cell.isEmpty()) {
+        const value = cell.value.toNumber();
+        counts.set(value, (counts.get(value) || 0) + 1);
+      }
+    });
+
+    return counts;
+  }
+
+  /**
+   * Get remaining count for each number (how many more can be placed)
+   */
+  getRemainingCounts(): Map<number, number> {
+    const currentCounts = this.getNumberCounts();
+    const remainingCounts = new Map<number, number>();
+
+    for (let i = 1; i <= 9; i++) {
+      const used = currentCounts.get(i) || 0;
+      remainingCounts.set(i, Math.max(0, 9 - used));
+    }
+
+    return remainingCounts;
+  }
 }
