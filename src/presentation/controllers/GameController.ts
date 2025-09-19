@@ -4,6 +4,8 @@ import { SudokuGame } from '../../domain/models/SudokuGame';
 import { Position } from '../../domain/models/Position';
 import { CellValue } from '../../domain/models/CellValue';
 import { Difficulty } from '../../domain/models/GameState';
+import { LineCompletionEffect } from '../../domain/models/LineCompletionEffect';
+import { CanvasGameRenderer } from '../renderers/CanvasGameRenderer';
 
 export interface GameControllerEvents {
   onGameUpdate: (game: SudokuGame) => void;
@@ -13,6 +15,7 @@ export interface GameControllerEvents {
 
 export class GameController {
   private currentGame: SudokuGame | null = null;
+  private animationFrameId: number | null = null;
 
   constructor(
     private gameService: GameService,
@@ -87,7 +90,14 @@ export class GameController {
       );
 
       this.currentGame = result.game;
-      this.renderGame();
+
+      // Handle line completion effects
+      if (result.lineCompletionEffects && result.lineCompletionEffects.length > 0) {
+        this.handleLineCompletionEffects(result.lineCompletionEffects);
+      } else {
+        this.renderGame();
+      }
+
       this.events.onGameUpdate(this.currentGame);
 
       if (result.isComplete) {
@@ -119,7 +129,14 @@ export class GameController {
       );
 
       this.currentGame = result.game;
-      this.renderGame();
+
+      // Handle line completion effects from clear action
+      if (result.lineCompletionEffects && result.lineCompletionEffects.length > 0) {
+        this.handleLineCompletionEffects(result.lineCompletionEffects);
+      } else {
+        this.renderGame();
+      }
+
       this.events.onGameUpdate(this.currentGame);
     } catch (error) {
       this.events.onError(`Failed to clear cell: ${error}`);
@@ -143,7 +160,14 @@ export class GameController {
         );
 
         this.currentGame = result.game;
-        this.renderGame();
+
+        // Handle line completion effects from hint
+        if (result.lineCompletionEffects && result.lineCompletionEffects.length > 0) {
+          this.handleLineCompletionEffects(result.lineCompletionEffects);
+        } else {
+          this.renderGame();
+        }
+
         this.events.onGameUpdate(this.currentGame);
 
         if (result.isComplete) {
@@ -204,6 +228,49 @@ export class GameController {
         showPossibleValues: false,
         theme: 'light'
       });
+    }
+  }
+
+  private handleLineCompletionEffects(effects: LineCompletionEffect[]): void {
+    if (this.renderer instanceof CanvasGameRenderer) {
+      this.renderer.addEffects(effects);
+      this.startEffectAnimation();
+    } else {
+      // Fallback for non-canvas renderers
+      this.renderGame();
+    }
+  }
+
+  private startEffectAnimation(): void {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+
+    let lastFrameTime = 0;
+    const targetFPS = 60;
+    const frameInterval = 1000 / targetFPS;
+
+    const animate = (currentTime: number) => {
+      // Throttle to 60fps for better performance
+      if (currentTime - lastFrameTime >= frameInterval) {
+        this.renderGame();
+        lastFrameTime = currentTime;
+      }
+
+      if (this.renderer instanceof CanvasGameRenderer && this.renderer.hasActiveEffects()) {
+        this.animationFrameId = requestAnimationFrame(animate);
+      } else {
+        this.animationFrameId = null;
+      }
+    };
+
+    this.animationFrameId = requestAnimationFrame(animate);
+  }
+
+  destroy(): void {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
     }
   }
 }

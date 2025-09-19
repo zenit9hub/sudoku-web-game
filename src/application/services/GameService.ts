@@ -5,6 +5,8 @@ import { Position } from '../../domain/models/Position';
 import { CellValue } from '../../domain/models/CellValue';
 import { SudokuValidationService } from '../../domain/services/SudokuValidationService';
 import { SudokuGeneratorService } from '../../domain/services/SudokuGeneratorService';
+import { LineCompletionDetectionService } from '../../domain/services/LineCompletionDetectionService';
+import { LineCompletionEffect } from '../../domain/models/LineCompletionEffect';
 import { GameRepository } from '../../infrastructure/interfaces/GameRepository';
 
 export interface MoveResult {
@@ -12,6 +14,7 @@ export interface MoveResult {
   game: SudokuGame;
   isComplete: boolean;
   conflictingPositions: Position[];
+  lineCompletionEffects: LineCompletionEffect[];
 }
 
 export interface HintResult {
@@ -22,10 +25,14 @@ export interface HintResult {
 }
 
 export class GameService {
+  private readonly lineCompletionDetectionService: LineCompletionDetectionService;
+
   constructor(
     private readonly gameRepository: GameRepository,
     private readonly validationService: SudokuValidationService
-  ) {}
+  ) {
+    this.lineCompletionDetectionService = new LineCompletionDetectionService();
+  }
 
   async createNewGame(difficulty: Difficulty): Promise<SudokuGame> {
     const gameId = this.generateGameId();
@@ -52,14 +59,14 @@ export class GameService {
 
   async makeMove(game: SudokuGame, position: Position, value: CellValue): Promise<MoveResult> {
     const cell = game.grid.getCell(position);
-    
+
     if (cell.isGiven) {
-      return this.createMoveResult(false, game, false, []);
+      return this.createMoveResult(false, game, false, [], []);
     }
 
     const validation = this.validationService.validateMove(game.grid, position, value);
     const newGrid = game.grid.setCell(position, value);
-    
+
     let newState = game.state.addMove();
     if (!validation.isValid) {
       newState = newState.addMistake();
@@ -67,15 +74,22 @@ export class GameService {
 
     const updatedGame = game.updateGrid(newGrid).updateState(newState);
     const isComplete = this.validationService.isGridComplete(newGrid);
-    
+
+    // Detect line completions only for valid moves
+    let lineCompletionEffects: LineCompletionEffect[] = [];
+    if (validation.isValid && !value.isEmpty()) {
+      const completions = this.lineCompletionDetectionService.detectCompletions(newGrid, position);
+      lineCompletionEffects = this.lineCompletionDetectionService.createEffectsFromCompletions(completions);
+    }
+
     const finalGame = isComplete ? updatedGame.updateState(newState.complete()) : updatedGame;
     await this.saveGame(finalGame);
-    
-    return this.createMoveResult(true, finalGame, isComplete, validation.conflictingPositions);
+
+    return this.createMoveResult(true, finalGame, isComplete, validation.conflictingPositions, lineCompletionEffects);
   }
 
-  private createMoveResult(success: boolean, game: SudokuGame, isComplete: boolean, conflictingPositions: Position[]): MoveResult {
-    return { success, game, isComplete, conflictingPositions };
+  private createMoveResult(success: boolean, game: SudokuGame, isComplete: boolean, conflictingPositions: Position[], lineCompletionEffects: LineCompletionEffect[]): MoveResult {
+    return { success, game, isComplete, conflictingPositions, lineCompletionEffects };
   }
 
   async getHint(game: SudokuGame): Promise<HintResult | null> {

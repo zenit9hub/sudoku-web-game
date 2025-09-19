@@ -4,14 +4,18 @@ import { Position } from '../../domain/models/Position';
 import { Cell } from '../../domain/models/Cell';
 import { BoardRenderer, BoardRenderOptions } from './BoardRenderer';
 import { SelectionEffectsRenderer, SelectionRenderOptions } from './SelectionEffectsRenderer';
+import { LineCompletionEffectsRenderer, EffectRenderOptions } from './LineCompletionEffectsRenderer';
+import { LineCompletionEffect } from '../../domain/models/LineCompletionEffect';
 
 export class CanvasGameRenderer implements GameRenderer {
   private ctx: CanvasRenderingContext2D;
   private cellSize: number = 0;
   private gridSize: number = 0;
-  
+
   private boardRenderer: BoardRenderer;
   private selectionRenderer: SelectionEffectsRenderer;
+  private effectsRenderer: LineCompletionEffectsRenderer;
+  private activeEffects: LineCompletionEffect[] = [];
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -31,14 +35,19 @@ export class CanvasGameRenderer implements GameRenderer {
     // Initialize specialized renderers
     this.boardRenderer = new BoardRenderer(this.ctx, this.cellSize, this.gridSize);
     this.selectionRenderer = new SelectionEffectsRenderer(this.ctx, this.cellSize);
+    this.effectsRenderer = new LineCompletionEffectsRenderer(this.ctx, this.cellSize);
   }
 
   render(game: SudokuGame, options: Partial<RenderOptions> = {}): void {
     const renderOptions = { ...this.defaultOptions, ...options };
-    
+
+    // Update effects progress
+    this.updateEffects();
+
     this.clear();
     this.renderBoard(renderOptions);
     this.renderCells(game, renderOptions);
+    this.renderEffects(renderOptions);
     this.renderSelection(game, renderOptions);
   }
 
@@ -73,6 +82,7 @@ export class CanvasGameRenderer implements GameRenderer {
     // Update dimensions in specialized renderers
     this.boardRenderer.updateDimensions(this.cellSize, this.gridSize);
     this.selectionRenderer.updateDimensions(this.cellSize);
+    this.effectsRenderer.updateDimensions(this.cellSize);
   }
 
   clear(): void {
@@ -259,5 +269,35 @@ export class CanvasGameRenderer implements GameRenderer {
     }
     
     return cellsWithNumbers;
+  }
+
+  // Effect management methods
+  addEffects(effects: LineCompletionEffect[]): void {
+    const startedEffects = effects.map(effect => effect.start());
+    this.activeEffects.push(...startedEffects);
+  }
+
+  hasActiveEffects(): boolean {
+    return this.effectsRenderer.hasActiveEffects(this.activeEffects);
+  }
+
+  private updateEffects(): void {
+    const currentTime = Date.now();
+    this.activeEffects = this.effectsRenderer.updateEffects(this.activeEffects, currentTime);
+  }
+
+  private renderEffects(options: RenderOptions): void {
+    if (this.activeEffects.length === 0) {
+      return;
+    }
+
+    const effectOptions: EffectRenderOptions = {
+      theme: options.theme,
+      highlightColor: options.theme === 'dark' ? 'rgba(255, 215, 0, 0.2)' : 'rgba(255, 140, 0, 0.25)',
+      glowColor: options.theme === 'dark' ? '#FFD700' : '#FF8C00',
+      animationDuration: 1500
+    };
+
+    this.effectsRenderer.renderEffects(this.activeEffects, effectOptions);
   }
 }
