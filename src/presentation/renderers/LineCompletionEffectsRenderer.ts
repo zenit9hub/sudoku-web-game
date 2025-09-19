@@ -51,10 +51,10 @@ export class LineCompletionEffectsRenderer {
     const scaledY = centerY - scaledSize / 2;
 
     this.ctx.save();
-    this.ctx.globalAlpha = opacity;
+    this.ctx.globalAlpha = opacity * 0.7;
 
     // Base color based on theme
-    const baseColor = options.theme === 'dark' ? '255, 215, 0' : '255, 140, 0'; // Gold
+    const baseColor = options.theme === 'dark' ? '100, 150, 255' : '50, 120, 255'; // Blue
 
     // Create gradient effect
     const gradient = this.ctx.createRadialGradient(

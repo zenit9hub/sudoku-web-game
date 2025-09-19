@@ -15,7 +15,7 @@
 #gameCanvas {
   width: 88%;
   height: 88%;
-  border: var(--border-width) solid var(--border-primary);
+  border: var(--border-width) solid var(--border-section);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-canvas);
   background: var(--bg-container);

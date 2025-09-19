@@ -20,9 +20,9 @@ export interface CellEffectState {
 }
 
 export class LineCompletionEffect {
-  private static readonly CELL_DELAY = 50; // 50ms delay between cells
-  private static readonly EFFECT_STEPS = 10; // 10 animation steps per cell
-  private static readonly STEP_INTERVAL = 10; // 10ms per step
+  private static readonly CELL_DELAY = 35; // 50ms delay between cells
+  private static readonly EFFECT_STEPS = 15; // 10 animation steps per cell
+  private static readonly STEP_INTERVAL = 35; // 10ms per step
 
   constructor(
     public readonly id: string,
