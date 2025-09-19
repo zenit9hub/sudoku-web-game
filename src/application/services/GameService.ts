@@ -6,7 +6,7 @@ import { CellValue } from '../../domain/models/CellValue';
 import { SudokuValidationService } from '../../domain/services/SudokuValidationService';
 import { SudokuGeneratorService } from '../../domain/services/SudokuGeneratorService';
 import { LineCompletionDetectionService } from '../../domain/services/LineCompletionDetectionService';
-import { LineCompletionEffect } from '../../domain/models/LineCompletionEffect';
+import { LineCompletionEffect, EffectAnimation } from '../../domain/models/LineCompletionEffect';
 import { GameRepository } from '../../infrastructure/interfaces/GameRepository';
 
 export interface MoveResult {
@@ -79,7 +79,11 @@ export class GameService {
     let lineCompletionEffects: LineCompletionEffect[] = [];
     if (validation.isValid && !value.isEmpty()) {
       const completions = this.lineCompletionDetectionService.detectCompletions(newGrid, position);
-      lineCompletionEffects = this.lineCompletionDetectionService.createEffectsFromCompletions(completions);
+      // 기본적으로 RADIAL 이펙트 사용 (중심에서 퍼지는 효과)
+      lineCompletionEffects = this.lineCompletionDetectionService.createEffectsFromCompletions(
+        completions,
+        EffectAnimation.RADIAL
+      );
     }
 
     const finalGame = isComplete ? updatedGame.updateState(newState.complete()) : updatedGame;

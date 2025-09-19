@@ -5,6 +5,11 @@ export enum EffectType {
   COLUMN_COMPLETION = 'COLUMN_COMPLETION'
 }
 
+export enum EffectAnimation {
+  LINEAR = 'LINEAR',     // 선형 이펙트 (기존 방식)
+  RADIAL = 'RADIAL'      // 중심에서 퍼지는 이펙트
+}
+
 export enum EffectState {
   PENDING = 'PENDING',
   PLAYING = 'PLAYING',
@@ -19,74 +24,33 @@ export interface CellEffectState {
   isCompleted: boolean;
 }
 
-export class LineCompletionEffect {
-  private static readonly CELL_DELAY = 35; // 50ms delay between cells
-  private static readonly EFFECT_STEPS = 15; // 10 animation steps per cell
-  private static readonly STEP_INTERVAL = 35; // 10ms per step
+export abstract class LineCompletionEffect {
+  protected static readonly EFFECT_STEPS = 15; // animation steps per cell
+  protected static readonly STEP_INTERVAL = 35; // ms per step
 
   constructor(
     public readonly id: string,
     public readonly type: EffectType,
+    public readonly animation: EffectAnimation,
     public readonly lineIndex: number,
     public readonly cellPositions: Position[],
     public readonly state: EffectState,
     public readonly startTime: number,
-    public readonly cellEffects: CellEffectState[] = []
+    public readonly cellEffects: CellEffectState[] = [],
+    public readonly completionPosition?: Position // 완성된 셀의 위치
   ) {}
 
-  static createRowEffect(id: string, rowIndex: number): LineCompletionEffect {
-    const cellPositions: Position[] = [];
-    for (let col = 0; col < 9; col++) {
-      cellPositions.push(new Position(rowIndex, col));
-    }
+  abstract start(): LineCompletionEffect;
+  protected abstract calculateCellStartTime(cellIndex: number, baseStartTime: number): number;
 
-    return new LineCompletionEffect(
-      id,
-      EffectType.ROW_COMPLETION,
-      rowIndex,
-      cellPositions,
-      EffectState.PENDING,
-      Date.now(),
-      []
-    );
-  }
-
-  static createColumnEffect(id: string, colIndex: number): LineCompletionEffect {
-    const cellPositions: Position[] = [];
-    for (let row = 0; row < 9; row++) {
-      cellPositions.push(new Position(row, colIndex));
-    }
-
-    return new LineCompletionEffect(
-      id,
-      EffectType.COLUMN_COMPLETION,
-      colIndex,
-      cellPositions,
-      EffectState.PENDING,
-      Date.now(),
-      []
-    );
-  }
-
-  start(): LineCompletionEffect {
-    const startTime = Date.now();
-    const cellEffects: CellEffectState[] = this.cellPositions.map((position, index) => ({
+  protected createCellEffects(startTime: number): CellEffectState[] {
+    return this.cellPositions.map((position, index) => ({
       position,
-      startTime: startTime + (index * LineCompletionEffect.CELL_DELAY),
+      startTime: this.calculateCellStartTime(index, startTime),
       stepIndex: 0,
       isActive: false,
       isCompleted: false
     }));
-
-    return new LineCompletionEffect(
-      this.id,
-      this.type,
-      this.lineIndex,
-      this.cellPositions,
-      EffectState.PLAYING,
-      startTime,
-      cellEffects
-    );
   }
 
   updateProgress(currentTime: number): LineCompletionEffect {
@@ -136,14 +100,18 @@ export class LineCompletionEffect {
     const allCompleted = updatedCellEffects.every(effect => effect.isCompleted);
     const newState = allCompleted ? EffectState.COMPLETED : EffectState.PLAYING;
 
-    return new LineCompletionEffect(
+    // Create new instance with same concrete type
+    const constructor = this.constructor as any;
+    return new constructor(
       this.id,
       this.type,
+      this.animation,
       this.lineIndex,
       this.cellPositions,
       newState,
       this.startTime,
-      updatedCellEffects
+      updatedCellEffects,
+      this.completionPosition
     );
   }
 

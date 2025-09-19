@@ -1,11 +1,13 @@
 import { SudokuGrid } from '../models/SudokuGrid';
 import { Position } from '../models/Position';
-import { LineCompletionEffect } from '../models/LineCompletionEffect';
+import { LineCompletionEffect, EffectAnimation } from '../models/LineCompletionEffect';
+import { EffectFactory } from '../models/EffectFactory';
 
 export interface LineCompletionEvent {
   type: 'ROW_COMPLETED' | 'COLUMN_COMPLETED';
   lineIndex: number;
   positions: Position[];
+  completionPosition?: Position; // 완성을 트리거한 셀의 위치
 }
 
 export class LineCompletionDetectionService {
@@ -18,7 +20,8 @@ export class LineCompletionDetectionService {
         completions.push({
           type: 'ROW_COMPLETED',
           lineIndex: lastMovePosition.row,
-          positions: this.getRowPositions(lastMovePosition.row)
+          positions: this.getRowPositions(lastMovePosition.row),
+          completionPosition: lastMovePosition
         });
       }
 
@@ -27,7 +30,8 @@ export class LineCompletionDetectionService {
         completions.push({
           type: 'COLUMN_COMPLETED',
           lineIndex: lastMovePosition.col,
-          positions: this.getColumnPositions(lastMovePosition.col)
+          positions: this.getColumnPositions(lastMovePosition.col),
+          completionPosition: lastMovePosition
         });
       }
     } else {
@@ -54,14 +58,23 @@ export class LineCompletionDetectionService {
     return completions;
   }
 
-  createEffectsFromCompletions(completions: LineCompletionEvent[]): LineCompletionEffect[] {
+  createEffectsFromCompletions(
+    completions: LineCompletionEvent[],
+    animation: EffectAnimation = EffectAnimation.LINEAR
+  ): LineCompletionEffect[] {
     return completions.map(completion => {
-      const id = `${completion.type}_${completion.lineIndex}_${Date.now()}`;
-
       if (completion.type === 'ROW_COMPLETED') {
-        return LineCompletionEffect.createRowEffect(id, completion.lineIndex);
+        return EffectFactory.createRowEffect(
+          completion.lineIndex,
+          animation,
+          completion.completionPosition
+        );
       } else {
-        return LineCompletionEffect.createColumnEffect(id, completion.lineIndex);
+        return EffectFactory.createColumnEffect(
+          completion.lineIndex,
+          animation,
+          completion.completionPosition
+        );
       }
     });
   }
