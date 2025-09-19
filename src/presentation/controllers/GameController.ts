@@ -100,7 +100,16 @@ export class GameController {
 
       this.events.onGameUpdate(this.currentGame);
 
+      // 게임 완료 체크 로깅 추가
+      console.log('Game completion check:', {
+        isComplete: result.isComplete,
+        success: result.success,
+        filledCells: this.getFilledCellsCount(),
+        totalCells: 81
+      });
+
       if (result.isComplete) {
+        console.log('🎉 Game completed! Calling onGameComplete...');
         this.events.onGameComplete(this.currentGame);
       } else if (!result.success) {
         this.events.onError('잘못된 입력입니다');
@@ -219,6 +228,22 @@ export class GameController {
 
   getCurrentGame(): SudokuGame | null {
     return this.currentGame;
+  }
+
+  private getFilledCellsCount(): number {
+    if (!this.currentGame) return 0;
+
+    let count = 0;
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        const position = new Position(row, col);
+        const cell = this.currentGame.grid.getCell(position);
+        if (!cell.isEmpty()) {
+          count++;
+        }
+      }
+    }
+    return count;
   }
 
   private renderGame(): void {

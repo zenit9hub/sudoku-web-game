@@ -108,9 +108,21 @@ class SudokuApp {
    * Handle game completion
    */
   private handleGameComplete(game: SudokuGame): void {
+    console.log('🎉 handleGameComplete called!', {
+      gameId: game.state.gameId,
+      isComplete: game.state.isComplete,
+      statistics: game.state.statistics
+    });
+
     // Stop timer and get final time
     this.timerManager.stop();
     const finalTime = this.timerManager.getFormattedElapsedTime();
+
+    console.log('Final time and stats:', {
+      finalTime,
+      moves: game.state.statistics.moves,
+      hints: game.state.statistics.hints
+    });
 
     // Update UI with final stats
     this.uiManager.updateGameInfo(game, finalTime);

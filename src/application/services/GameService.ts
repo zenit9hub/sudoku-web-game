@@ -106,7 +106,17 @@ export class GameService {
     }
 
     const updatedGame = game.updateGrid(newGrid).updateState(newState);
-    const isComplete = this.enhancedValidationService.isGridComplete(newGrid);
+    const isComplete = this.enhancedValidationService.isGridComplete(newGrid, updatedGame.state);
+
+    // 디버깅을 위한 로깅 추가
+    console.log('Move validation result:', {
+      position: position.toString(),
+      value: value.toString(),
+      isValid: validation.isValid,
+      isComplete,
+      filledCells: newGrid.getFilledCellCount(),
+      totalCells: 81
+    });
 
     // Detect line completions only for valid moves
     let lineCompletionEffects: LineCompletionEffect[] = [];

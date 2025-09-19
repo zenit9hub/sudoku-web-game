@@ -116,10 +116,18 @@ export class UIManager {
    * Show game completion dialog
    */
   showGameComplete(game: SudokuGame, finalTime: string): void {
+    console.log('UIManager.showGameComplete called!', {
+      finalTime,
+      gameStats: game.state.statistics
+    });
+
     const stats = game.state.statistics;
     const message = `${MESSAGES.GAME_COMPLETE}\n\n${MESSAGES.GAME_STATS(finalTime, stats.moves, stats.hints)}`;
 
+    console.log('About to show alert with message:', message);
+
     setTimeout(() => {
+      console.log('Showing game complete alert now!');
       alert(message);
     }, APP_CONFIG.UI.GAME_COMPLETE_DELAY);
   }

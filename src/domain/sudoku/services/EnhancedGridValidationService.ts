@@ -93,37 +93,72 @@ export class EnhancedGridValidationService {
   /**
    * 그리드 완료 여부 검사
    */
-  isGridComplete(grid: any): boolean {
-    // 모든 셀이 채워져 있는지 확인
+  isGridComplete(grid: any, gameState?: any): boolean {
+    console.log('Checking if grid is complete...');
+
+    // 1. 모든 셀이 채워져 있는지 확인
+    let filledCells = 0;
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         const cell = grid.getCell(new Position(row, col));
         if (cell.isEmpty()) {
+          console.log(`Empty cell found at (${row}, ${col}), grid not complete`);
           return false;
         }
+        filledCells++;
       }
     }
 
-    // 모든 규칙이 만족되는지 확인
+    console.log(`All ${filledCells} cells are filled. Checking for conflicts...`);
+
+    // 2. 간단한 스도쿠 규칙 검사 (중복 값 확인)
+    // 행 검사
     for (let row = 0; row < 9; row++) {
+      const seen = new Set();
       for (let col = 0; col < 9; col++) {
-        const position = new Position(row, col);
-        const cell = grid.getCell(position);
-
-        const context: SudokuMoveContext = {
-          grid,
-          position,
-          value: cell.value,
-          gameState: { isComplete: false, isPaused: false, mistakeCount: 0 }
-        };
-
-        const result = this.moveValidationEngine.validate(context);
-        if (!result.isValid) {
+        const cell = grid.getCell(new Position(row, col));
+        const value = cell.value.toString();
+        if (seen.has(value)) {
+          console.log(`Duplicate value ${value} in row ${row}`);
           return false;
+        }
+        seen.add(value);
+      }
+    }
+
+    // 열 검사
+    for (let col = 0; col < 9; col++) {
+      const seen = new Set();
+      for (let row = 0; row < 9; row++) {
+        const cell = grid.getCell(new Position(row, col));
+        const value = cell.value.toString();
+        if (seen.has(value)) {
+          console.log(`Duplicate value ${value} in column ${col}`);
+          return false;
+        }
+        seen.add(value);
+      }
+    }
+
+    // 3x3 박스 검사
+    for (let boxRow = 0; boxRow < 3; boxRow++) {
+      for (let boxCol = 0; boxCol < 3; boxCol++) {
+        const seen = new Set();
+        for (let row = boxRow * 3; row < boxRow * 3 + 3; row++) {
+          for (let col = boxCol * 3; col < boxCol * 3 + 3; col++) {
+            const cell = grid.getCell(new Position(row, col));
+            const value = cell.value.toString();
+            if (seen.has(value)) {
+              console.log(`Duplicate value ${value} in box (${boxRow}, ${boxCol})`);
+              return false;
+            }
+            seen.add(value);
+          }
         }
       }
     }
 
+    console.log('🎉 Grid is complete and valid!');
     return true;
   }
 
