@@ -4,7 +4,6 @@ import { GameRepository } from '../domain/sudoku/repositories/GameRepository.js'
 import { SudokuValidationService } from '../domain/sudoku/services/GridValidationService.js';
 import { LineCompletionDetectionService } from '../domain/sudoku/services/CompletionDetectionService.js';
 import { EffectSequenceManager } from '../domain/effects/services/EffectSequenceManager.js';
-import { EffectFactory } from '../domain/effects/services/EffectFactory.js';
 
 /**
  * 애플리케이션 파사드
@@ -21,8 +20,7 @@ export class ApplicationFacade {
     gameRepository: GameRepository,
     validationService: SudokuValidationService,
     completionDetectionService: LineCompletionDetectionService,
-    effectSequenceManager: EffectSequenceManager,
-    effectFactory: EffectFactory
+    effectSequenceManager: EffectSequenceManager
   ) {
     // 스도쿠 애플리케이션 서비스 초기화
     this.sudoku = new SudokuApplicationService(
@@ -33,8 +31,7 @@ export class ApplicationFacade {
 
     // 이펙트 애플리케이션 서비스 초기화
     this.effects = new EffectApplicationService(
-      effectSequenceManager,
-      effectFactory
+      effectSequenceManager
     );
   }
 
@@ -45,19 +42,16 @@ export class ApplicationFacade {
     gameRepository: GameRepository,
     validationService: SudokuValidationService,
     completionDetectionService: LineCompletionDetectionService,
-    effectSequenceManager?: EffectSequenceManager,
-    effectFactory?: EffectFactory
+    effectSequenceManager?: EffectSequenceManager
   ): ApplicationFacade {
     // 기본 이펙트 서비스들 생성
     const defaultEffectSequenceManager = effectSequenceManager || new EffectSequenceManager();
-    const defaultEffectFactory = effectFactory || new EffectFactory();
 
     return new ApplicationFacade(
       gameRepository,
       validationService,
       completionDetectionService,
-      defaultEffectSequenceManager,
-      defaultEffectFactory
+      defaultEffectSequenceManager
     );
   }
 

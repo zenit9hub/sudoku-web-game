@@ -1,4 +1,4 @@
-import { Query, QueryResult } from '../../common/Query.js';
+import { Query } from '../../common/Query.js';
 import { SudokuGame } from '../../../domain/sudoku/aggregates/Game.js';
 
 /**

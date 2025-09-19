@@ -37,7 +37,7 @@ export class ValidateComprehensivelyCommandHandler {
 
   async handle(command: ValidateComprehensivelyCommand): Promise<ValidateComprehensivelyResult> {
     try {
-      const game = await this.gameRepository.load(command.data.gameId);
+      const game = await this.gameRepository.load(command.request.gameId);
 
       if (!game) {
         return {
@@ -53,9 +53,9 @@ export class ValidateComprehensivelyCommandHandler {
         };
       }
 
-      const position = GameMapper.positionFromDto(command.data.position);
-      const value = GameMapper.cellValueFromNumber(command.data.value);
-      const level = command.data.validationLevel || 'standard';
+      const position = GameMapper.positionFromDto(command.request.position);
+      const value = GameMapper.cellValueFromNumber(command.request.value);
+      const level = command.request.validationLevel || 'standard';
 
       const result = await this.validationService.validateComprehensively(
         game.grid,

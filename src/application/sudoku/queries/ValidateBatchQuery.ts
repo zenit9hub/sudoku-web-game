@@ -5,8 +5,8 @@ export interface ValidateBatchQueryData {
   validationLevel?: 'basic' | 'standard' | 'strict' | 'expert';
 }
 
-export class ValidateBatchQuery implements Query {
+export class ValidateBatchQuery implements Query<ValidateBatchQueryData> {
   readonly type = 'ValidateBatch';
 
-  constructor(public readonly data: ValidateBatchQueryData) {}
+  constructor(public readonly request: ValidateBatchQueryData) {}
 }

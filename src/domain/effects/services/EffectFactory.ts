@@ -133,4 +133,20 @@ export class EffectFactory {
       allowConcurrent: false
     });
   }
+
+  static createLineCompletionSequence(
+    lineType: 'row' | 'column',
+    lineIndex: number,
+    completionPosition: Position,
+    animation?: EffectAnimation,
+    options?: EffectSequenceOptions
+  ): EffectSequence {
+    const effectAnimation = animation || EffectAnimation.RADIAL;
+
+    const effect = lineType === 'row'
+      ? this.createRowEffect(lineIndex, effectAnimation, completionPosition)
+      : this.createColumnEffect(lineIndex, effectAnimation, completionPosition);
+
+    return this.createSimpleSequence([effect], options);
+  }
 }

@@ -6,8 +6,8 @@ export interface ValidateRealtimeQueryData {
   partialValue: string;
 }
 
-export class ValidateRealtimeQuery implements Query {
+export class ValidateRealtimeQuery implements Query<ValidateRealtimeQueryData> {
   readonly type = 'ValidateRealtime';
 
-  constructor(public readonly data: ValidateRealtimeQueryData) {}
+  constructor(public readonly request: ValidateRealtimeQueryData) {}
 }

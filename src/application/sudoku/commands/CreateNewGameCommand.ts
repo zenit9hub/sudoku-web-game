@@ -1,4 +1,4 @@
-import { Command, CommandResult } from '../../common/Command.js';
+import { Command } from '../../common/Command.js';
 import { SudokuGame } from '../../../domain/sudoku/aggregates/Game.js';
 import { Difficulty } from '../../../domain/sudoku/entities/GameState.js';
 

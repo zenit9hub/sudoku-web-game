@@ -23,4 +23,8 @@ export class Position {
   getBoxIndex(): number {
     return Math.floor(this.row / 3) * 3 + Math.floor(this.col / 3);
   }
+
+  isValid(): boolean {
+    return this.row >= 0 && this.row <= 8 && this.col >= 0 && this.col <= 8;
+  }
 }

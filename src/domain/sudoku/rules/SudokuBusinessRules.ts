@@ -233,7 +233,7 @@ export class MaxMistakesRule extends BaseBusinessRule<SudokuMoveContext> {
     return context.gameState.mistakeCount < this.maxMistakes;
   }
 
-  getErrorMessage(context: SudokuMoveContext): string {
+  getErrorMessage(_context: SudokuMoveContext): string {
     return `Maximum mistakes (${this.maxMistakes}) reached. Game over.`;
   }
 }

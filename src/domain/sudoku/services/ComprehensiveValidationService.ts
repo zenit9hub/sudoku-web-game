@@ -72,18 +72,16 @@ export interface ValidationOptions {
 
 export class ComprehensiveValidationService {
   private engines: Map<ValidationLevel, BusinessRuleEngine<SudokuMoveContext>>;
-  private eventPublisher?: DomainEventPublisher;
   private validationCache: Map<string, ComprehensiveValidationResult>;
   private performanceMetrics: Map<string, number>;
 
   constructor(
     difficulty: Difficulty = Difficulty.MEDIUM,
-    eventPublisher?: DomainEventPublisher
+    _eventPublisher?: DomainEventPublisher
   ) {
     this.engines = new Map();
     this.validationCache = new Map();
     this.performanceMetrics = new Map();
-    this.eventPublisher = eventPublisher;
 
     this.initializeEngines(difficulty);
   }
@@ -99,7 +97,7 @@ export class ComprehensiveValidationService {
     gameState?: any,
     options: ValidationOptions = {}
   ): Promise<ComprehensiveValidationResult> {
-    const startTime = performance.now();
+    const startTime = globalThis.performance.now();
 
     const defaultOptions: Required<ValidationOptions> = {
       includeWarnings: true,
@@ -144,8 +142,8 @@ export class ComprehensiveValidationService {
       : [];
 
     // 성능 메트릭 계산
-    const validationTime = performance.now() - startTime;
-    const performance: ValidationPerformance = {
+    const validationTime = globalThis.performance.now() - startTime;
+    const performanceResult: ValidationPerformance = {
       validationTime,
       rulesChecked: this.getEngineRuleCount(level),
       cacheHits: this.performanceMetrics.get('cacheHits') || 0,
@@ -160,7 +158,7 @@ export class ComprehensiveValidationService {
       violatedRules: basicResult.violatedRules.map(vr => vr.rule.name),
       warnings,
       suggestions: suggestions.slice(0, defaultOptions.maxSuggestions),
-      performance
+      performance: performanceResult
     };
 
     // 캐시에 저장
@@ -213,7 +211,6 @@ export class ComprehensiveValidationService {
     immediateConflicts: Position[];
   }> {
     const possibleValues: number[] = [];
-    const immediateConflicts: Position[] = [];
 
     // 부분 입력에 대한 즉시 피드백
     if (partialValue === '') {
@@ -262,7 +259,7 @@ export class ComprehensiveValidationService {
   /**
    * 검증 레벨 변경
    */
-  setValidationLevel(level: ValidationLevel): void {
+  setValidationLevel(_level: ValidationLevel): void {
     // 필요시 엔진 재초기화
   }
 
@@ -439,7 +436,7 @@ export class ComprehensiveValidationService {
     return suggestions;
   }
 
-  private extractConflictingPositions(grid: any, position: Position, value: CellValue): Position[] {
+  private extractConflictingPositions(_grid: any, _position: Position, value: CellValue): Position[] {
     const conflicts: Position[] = [];
 
     if (value.isEmpty()) return conflicts;
@@ -485,17 +482,17 @@ export class ComprehensiveValidationService {
     return 0;
   }
 
-  private async findBetterMoves(context: ValidationContext): Promise<any[]> {
+  private async findBetterMoves(_context: ValidationContext): Promise<any[]> {
     // 더 나은 움직임 찾기 로직
     return [];
   }
 
-  private async isCommonMistakePattern(context: ValidationContext): Promise<boolean> {
+  private async isCommonMistakePattern(_context: ValidationContext): Promise<boolean> {
     // 일반적인 실수 패턴 검사 로직
     return false;
   }
 
-  private async findStrategicMoves(context: ValidationContext): Promise<any[]> {
+  private async findStrategicMoves(_context: ValidationContext): Promise<any[]> {
     // 전략적 움직임 찾기 로직
     return [];
   }

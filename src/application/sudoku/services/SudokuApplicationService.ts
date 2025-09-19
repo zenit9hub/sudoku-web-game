@@ -23,7 +23,6 @@ import { GameRepository } from '../../../domain/sudoku/repositories/GameReposito
 import { SudokuValidationService } from '../../../domain/sudoku/services/GridValidationService.js';
 import { LineCompletionDetectionService } from '../../../domain/sudoku/services/CompletionDetectionService.js';
 import { DomainEventPublisher } from '../../../domain/common/events/DomainEventPublisher.js';
-import { EnhancedGridValidationService } from '../../../domain/sudoku/services/EnhancedGridValidationService.js';
 import { ComprehensiveValidationService } from '../../../domain/sudoku/services/ComprehensiveValidationService.js';
 import { AdvancedPuzzleGenerationService } from '../../../domain/sudoku/services/AdvancedPuzzleGenerationService.js';
 
@@ -38,7 +37,6 @@ export class SudokuApplicationService {
   private readonly makeMoveHandler: MakeMoveCommandHandler;
   private readonly getGameHandler: GetGameQueryHandler;
   private readonly getHintHandler: GetGameHintQueryHandler;
-  private readonly enhancedValidationService: EnhancedGridValidationService;
   private readonly comprehensiveValidationService: ComprehensiveValidationService;
   private readonly advancedGenerationService: AdvancedPuzzleGenerationService;
 
@@ -49,30 +47,25 @@ export class SudokuApplicationService {
     eventPublisher?: DomainEventPublisher
   ) {
     // 향상된 도메인 서비스들 초기화
-    this.enhancedValidationService = new EnhancedGridValidationService(
-      undefined, // 기본 난이도 사용
-      eventPublisher
-    );
     this.comprehensiveValidationService = new ComprehensiveValidationService(
       undefined, // 기본 난이도 사용
       eventPublisher
     );
     this.advancedGenerationService = new AdvancedPuzzleGenerationService();
 
-    // 기존 핸들러들 초기화 (향상된 서비스 사용)
+    // 기존 핸들러들 초기화 (기존 서비스 사용)
     this.createNewGameHandler = new CreateNewGameCommandHandler(
-      gameRepository,
-      this.enhancedValidationService // 향상된 검증 서비스 사용
+      gameRepository
     );
     this.makeMoveHandler = new MakeMoveCommandHandler(
       gameRepository,
-      this.enhancedValidationService, // 향상된 검증 서비스 사용
+      validationService,
       completionDetectionService
     );
     this.getGameHandler = new GetGameQueryHandler(gameRepository);
     this.getHintHandler = new GetGameHintQueryHandler(
       gameRepository,
-      this.enhancedValidationService // 향상된 검증 서비스 사용
+      validationService
     );
   }
 
@@ -344,7 +337,7 @@ export class SudokuApplicationService {
         clueCount: result.quality.clueCount,
         symmetryScore: result.quality.symmetryScore,
         aestheticScore: result.quality.aestheticScore,
-        uniqueness: result.quality.uniqueness
+        uniqueness: result.quality.uniqueness === true
       },
       generationTime: result.generationTime,
       attempts: result.attempts

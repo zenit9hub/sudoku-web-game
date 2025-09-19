@@ -100,6 +100,13 @@ export class SudokuGrid {
   }
 
   /**
+   * Get count of filled cells
+   */
+  getFilledCellCount(): number {
+    return this.getFilledCells().length;
+  }
+
+  /**
    * Get count of each number (1-9) currently placed in the grid
    */
   getNumberCounts(): Map<number, number> {

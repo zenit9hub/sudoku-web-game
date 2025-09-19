@@ -18,8 +18,7 @@ import {
  */
 export class EffectApplicationService {
   constructor(
-    private readonly effectSequenceManager: EffectSequenceManager,
-    private readonly effectFactory: EffectFactory
+    private readonly effectSequenceManager: EffectSequenceManager
   ) {}
 
   /**
@@ -35,7 +34,7 @@ export class EffectApplicationService {
       const sequenceOptions = request.sequenceOptions ?
         EffectMapper.sequenceOptionsFromDto(request.sequenceOptions) : undefined;
 
-      const sequence = this.effectFactory.createLineCompletionSequence(
+      const sequence = EffectFactory.createLineCompletionSequence(
         request.lineType,
         request.lineIndex,
         position,

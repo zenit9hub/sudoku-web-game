@@ -1,4 +1,4 @@
-import { Command, CommandResult } from '../../common/Command.js';
+import { Command } from '../../common/Command.js';
 import { SudokuGame } from '../../../domain/sudoku/aggregates/Game.js';
 import { Position } from '../../../domain/sudoku/value-objects/Position.js';
 import { CellValue } from '../../../domain/sudoku/value-objects/CellValue.js';

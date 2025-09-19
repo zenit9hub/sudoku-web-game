@@ -1,4 +1,4 @@
-import { Query, QueryResult } from '../../common/Query.js';
+import { Query } from '../../common/Query.js';
 import { Position } from '../../../domain/sudoku/value-objects/Position.js';
 import { CellValue } from '../../../domain/sudoku/value-objects/CellValue.js';
 

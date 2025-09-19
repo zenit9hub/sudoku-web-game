@@ -27,11 +27,11 @@ export class GenerateAdvancedPuzzleCommandHandler {
 
   async handle(command: GenerateAdvancedPuzzleCommand): Promise<GenerateAdvancedPuzzleResult> {
     try {
-      const difficulty = command.data.difficulty as any;
+      const difficulty = command.request.difficulty as any;
       const options = {
-        useSymmetricRemoval: command.data.useSymmetry || false,
-        targetClueCount: command.data.targetClueCount,
-        maxAttempts: command.data.maxAttempts || 100,
+        useSymmetricRemoval: command.request.useSymmetry || false,
+        targetClueCount: command.request.targetClueCount,
+        maxAttempts: command.request.maxAttempts || 100,
         validateUniqueness: true,
         optimizeAesthetics: true
       };
@@ -57,7 +57,7 @@ export class GenerateAdvancedPuzzleCommandHandler {
           attempts: result.attempts
         },
         metadata: {
-          requestedDifficulty: command.data.difficulty,
+          requestedDifficulty: command.request.difficulty,
           options,
           timestamp: new Date().toISOString()
         }

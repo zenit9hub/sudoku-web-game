@@ -37,4 +37,8 @@ export class CellValue {
     }
     return this.value;
   }
+
+  isValid(): boolean {
+    return this.value === null || CellValue.VALID_VALUES.has(this.value);
+  }
 }

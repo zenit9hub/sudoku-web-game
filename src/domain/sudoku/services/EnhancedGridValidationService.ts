@@ -223,7 +223,7 @@ export class EnhancedGridValidationService {
     const suggestions: ValidationSuggestion[] = [];
 
     // 해당 위치에 가능한 값들 찾기
-    const possibleValues = this.getPossibleValues(grid, position);
+    const possibleValues = await this.getPossibleValues(grid, position);
 
     if (possibleValues.length === 1) {
       suggestions.push({
@@ -247,7 +247,7 @@ export class EnhancedGridValidationService {
 
     // Hidden single 검사
     for (const num of possibleValues) {
-      if (this.isHiddenSingle(grid, position, new CellValue(num))) {
+      if (await this.isHiddenSingle(grid, position, new CellValue(num))) {
         suggestions.push({
           type: 'hidden_single',
           position,
@@ -263,7 +263,7 @@ export class EnhancedGridValidationService {
   /**
    * 가능한 값들 조회
    */
-  private getPossibleValues(grid: any, position: Position): number[] {
+  private async getPossibleValues(grid: any, position: Position): Promise<number[]> {
     const possible: number[] = [];
 
     for (let num = 1; num <= 9; num++) {
@@ -343,12 +343,12 @@ export class EnhancedGridValidationService {
   /**
    * Hidden single 여부 확인
    */
-  private isHiddenSingle(grid: any, position: Position, value: CellValue): boolean {
+  private async isHiddenSingle(grid: any, position: Position, value: CellValue): Promise<boolean> {
     // 행에서 유일한 위치인지 확인
     let possibleInRow = 0;
     for (let col = 0; col < 9; col++) {
       const pos = new Position(position.row, col);
-      if (this.canPlaceValue(grid, pos, value)) {
+      if (await this.canPlaceValue(grid, pos, value)) {
         possibleInRow++;
       }
     }
@@ -359,7 +359,7 @@ export class EnhancedGridValidationService {
     let possibleInCol = 0;
     for (let row = 0; row < 9; row++) {
       const pos = new Position(row, position.col);
-      if (this.canPlaceValue(grid, pos, value)) {
+      if (await this.canPlaceValue(grid, pos, value)) {
         possibleInCol++;
       }
     }
@@ -374,7 +374,7 @@ export class EnhancedGridValidationService {
     for (let row = boxStartRow; row < boxStartRow + 3; row++) {
       for (let col = boxStartCol; col < boxStartCol + 3; col++) {
         const pos = new Position(row, col);
-        if (this.canPlaceValue(grid, pos, value)) {
+        if (await this.canPlaceValue(grid, pos, value)) {
           possibleInBox++;
         }
       }
@@ -386,11 +386,11 @@ export class EnhancedGridValidationService {
   /**
    * 특정 위치에 값을 놓을 수 있는지 확인
    */
-  private canPlaceValue(grid: any, position: Position, value: CellValue): boolean {
+  private async canPlaceValue(grid: any, position: Position, value: CellValue): Promise<boolean> {
     const cell = grid.getCell(position);
     if (!cell.isEmpty()) return false;
 
-    const possibleValues = this.getPossibleValues(grid, position);
+    const possibleValues = await this.getPossibleValues(grid, position);
     return possibleValues.includes(value.value || 0);
   }
 

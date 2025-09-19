@@ -7,8 +7,8 @@ export interface GenerateAdvancedPuzzleCommandData {
   maxAttempts?: number;
 }
 
-export class GenerateAdvancedPuzzleCommand implements Command {
+export class GenerateAdvancedPuzzleCommand implements Command<GenerateAdvancedPuzzleCommandData> {
   readonly type = 'GenerateAdvancedPuzzle';
 
-  constructor(public readonly data: GenerateAdvancedPuzzleCommandData) {}
+  constructor(public readonly request: GenerateAdvancedPuzzleCommandData) {}
 }

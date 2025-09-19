@@ -36,7 +36,7 @@ export interface PuzzleQuality {
   readonly difficulty: Difficulty;
   readonly clueCount: number;
   readonly symmetryScore: number; // 0-1
-  readonly uniqueness: 'unique' | 'multiple' | 'unsolvable';
+  readonly uniqueness: boolean;
   readonly requiredTechniques: SolvingTechnique[];
   readonly estimatedSolvingTime: number;
   readonly aestheticScore: number; // 0-1
@@ -51,12 +51,10 @@ export interface GenerationResult {
 }
 
 export class AdvancedPuzzleGenerationService {
-  private seed: number;
   private validationService: EnhancedGridValidationService;
   private rng: () => number;
 
   constructor(seed: number = Date.now()) {
-    this.seed = seed;
     this.validationService = new EnhancedGridValidationService();
     this.rng = this.createSeededRandom(seed);
   }
@@ -259,13 +257,14 @@ export class AdvancedPuzzleGenerationService {
    */
   private async evaluatePuzzleQuality(
     puzzle: any,
-    solution: any,
+    _solution: any,
     difficulty: Difficulty,
-    options: Required<PuzzleGenerationOptions>
+    _options: Required<PuzzleGenerationOptions>
   ): Promise<PuzzleQuality> {
     const clueCount = this.getClueCount(puzzle);
     const symmetryScore = this.calculateSymmetryScore(puzzle);
-    const uniqueness = await this.checkUniqueness(puzzle);
+    const uniquenessResult = await this.checkUniqueness(puzzle);
+    const uniqueness = uniquenessResult === 'unique';
     const requiredTechniques = await this.analyzeRequiredTechniques(puzzle);
     const estimatedSolvingTime = this.estimateSolvingTime(puzzle, requiredTechniques);
     const aestheticScore = this.calculateAestheticScore(puzzle, symmetryScore, clueCount, difficulty);
@@ -518,7 +517,7 @@ export class AdvancedPuzzleGenerationService {
     }
   }
 
-  private getTargetClues(difficulty: Difficulty, options: Required<PuzzleGenerationOptions>): number {
+  private getTargetClues(_difficulty: Difficulty, options: Required<PuzzleGenerationOptions>): number {
     const min = options.minimumClues;
     const max = options.maximumClues;
     return Math.floor(min + (max - min) * this.rng());
@@ -568,7 +567,7 @@ export class AdvancedPuzzleGenerationService {
     return 'multiple'; // 간단화된 구현
   }
 
-  private estimateSolvingTime(puzzle: any, techniques: SolvingTechnique[]): number {
+  private estimateSolvingTime(_puzzle: any, techniques: SolvingTechnique[]): number {
     const baseTime = 180; // 3 minutes base
     const techniqueMultipliers = {
       [SolvingTechnique.NAKED_SINGLE]: 1.0,

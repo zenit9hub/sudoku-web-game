@@ -44,7 +44,7 @@ export class MoveAttemptedHandler implements DomainEventHandler<MoveAttempted> {
     this.updateMoveStatistics(event);
   }
 
-  private updateMoveStatistics(event: MoveAttempted): void {
+  private updateMoveStatistics(_event: MoveAttempted): void {
     // 통계 로직 구현
     // 예: 정확도 계산, 패턴 분석 등
   }
@@ -66,11 +66,11 @@ export class ValidMoveCompletedHandler implements DomainEventHandler<ValidMoveCo
     this.checkForAchievements(event);
   }
 
-  private recordSuccessfulMove(event: ValidMoveCompleted): void {
+  private recordSuccessfulMove(_event: ValidMoveCompleted): void {
     // 성공적인 움직임 기록
   }
 
-  private checkForAchievements(event: ValidMoveCompleted): void {
+  private checkForAchievements(_event: ValidMoveCompleted): void {
     // 업적 체크 로직
     // 예: 연속 정답, 빠른 해결 등
   }
@@ -93,11 +93,11 @@ export class InvalidMoveAttemptedHandler implements DomainEventHandler<InvalidMo
     this.provideFeedback(event);
   }
 
-  private recordMistake(event: InvalidMoveAttempted): void {
+  private recordMistake(_event: InvalidMoveAttempted): void {
     // 실수 패턴 분석 및 기록
   }
 
-  private provideFeedback(event: InvalidMoveAttempted): void {
+  private provideFeedback(_event: InvalidMoveAttempted): void {
     // 사용자 피드백 제공
     // 예: 힌트 제안, 학습 자료 추천 등
   }
@@ -160,12 +160,12 @@ export class GameCompletedHandler implements DomainEventHandler<GameCompleted> {
     return Math.max(0, finalScore);
   }
 
-  private updatePlayerStats(event: GameCompleted): void {
+  private updatePlayerStats(_event: GameCompleted): void {
     // 플레이어 통계 업데이트
     // 예: 평균 완주 시간, 최고 기록, 난이도별 통계 등
   }
 
-  private triggerCelebration(event: GameCompleted): void {
+  private triggerCelebration(_event: GameCompleted): void {
     // 축하 애니메이션이나 효과 트리거
   }
 }
@@ -188,12 +188,12 @@ export class HintRequestedHandler implements DomainEventHandler<HintRequested> {
     this.provideEducationalContent(event);
   }
 
-  private trackHintUsage(event: HintRequested): void {
+  private trackHintUsage(_event: HintRequested): void {
     // 힌트 사용 패턴 분석
     // 어떤 상황에서 힌트를 많이 사용하는지 등
   }
 
-  private provideEducationalContent(event: HintRequested): void {
+  private provideEducationalContent(_event: HintRequested): void {
     // 교육적 콘텐츠 제공
     // 해당 힌트 타입에 대한 설명이나 전략 가이드
   }
@@ -213,7 +213,7 @@ export class GamePausedHandler implements DomainEventHandler<GamePaused> {
     this.saveGameState(event);
   }
 
-  private saveGameState(event: GamePaused): void {
+  private saveGameState(_event: GamePaused): void {
     // 게임 상태 즉시 저장
     // 예상치 못한 종료에 대비
   }
@@ -233,7 +233,7 @@ export class GameResumedHandler implements DomainEventHandler<GameResumed> {
     this.restoreGameContext(event);
   }
 
-  private restoreGameContext(event: GameResumed): void {
+  private restoreGameContext(_event: GameResumed): void {
     // 게임 컨텍스트 복원
     // UI 상태 복원, 타이머 재시작 등
   }
@@ -253,12 +253,12 @@ export class GameResetHandler implements DomainEventHandler<GameReset> {
     this.analyzeResetReason(event);
   }
 
-  private recordResetAction(event: GameReset): void {
+  private recordResetAction(_event: GameReset): void {
     // 리셋 행동 기록
     // 어떤 상황에서 리셋하는지 분석
   }
 
-  private analyzeResetReason(event: GameReset): void {
+  private analyzeResetReason(_event: GameReset): void {
     // 리셋 이유 분석
     // 난이도 조정이나 게임 밸런스에 활용
   }

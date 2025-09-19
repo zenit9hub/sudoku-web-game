@@ -17,7 +17,6 @@ import { EffectSequenceDto } from '../../../application/effects/dtos/EffectDtos.
 export class CanvasGameRenderer implements GameRenderer {
   private theme: GameTheme;
   private viewport: ViewportInfo;
-  private _animationSpeed: number = 1.0;
 
   constructor(
     private readonly renderingEngine: RenderingEngine
@@ -161,8 +160,8 @@ export class CanvasGameRenderer implements GameRenderer {
     this.viewport = viewport;
   }
 
-  setAnimationSpeed(speed: number): void {
-    this._animationSpeed = Math.max(0.1, Math.min(3.0, speed));
+  setAnimationSpeed(_speed: number): void {
+    // Animation speed functionality to be implemented
   }
 
   private renderCell(cell: CellRenderInfo, _row: number, _col: number): void {

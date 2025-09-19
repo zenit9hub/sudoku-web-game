@@ -7,8 +7,8 @@ export interface ValidateComprehensivelyCommandData {
   validationLevel?: 'basic' | 'standard' | 'strict' | 'expert';
 }
 
-export class ValidateComprehensivelyCommand implements Command {
+export class ValidateComprehensivelyCommand implements Command<ValidateComprehensivelyCommandData> {
   readonly type = 'ValidateComprehensively';
 
-  constructor(public readonly data: ValidateComprehensivelyCommandData) {}
+  constructor(public readonly request: ValidateComprehensivelyCommandData) {}
 }

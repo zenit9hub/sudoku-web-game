@@ -1,8 +1,6 @@
 import { EffectSequence } from '../../../domain/effects/aggregates/EffectSequence.js';
 import { LineCompletionEffect } from '../../../domain/effects/entities/LineCompletionEffect.js';
 import { EffectAnimation } from '../../../domain/effects/value-objects/EffectAnimation.js';
-import { EffectType } from '../../../domain/effects/value-objects/EffectType.js';
-import { GameMapper } from '../../sudoku/mappers/GameMapper.js';
 import {
   EffectDto,
   EffectSequenceDto,
@@ -31,7 +29,7 @@ export class EffectMapper {
   /**
    * 이펙트를 DTO로 변환
    */
-  static effectToDto(effect: LineCompletionEffect): EffectDto {
+  static effectToDto(_effect: LineCompletionEffect): EffectDto {
     // 임시로 기본값들을 사용 - 실제 구현 시 LineCompletionEffect 구조에 맞게 수정 필요
     return {
       id: 'temp-id',
@@ -54,7 +52,7 @@ export class EffectMapper {
   /**
    * 이펙트 애니메이션을 DTO로 변환
    */
-  static animationToDto(animation: EffectAnimation): EffectAnimationDto {
+  static animationToDto(_animation: EffectAnimation): EffectAnimationDto {
     // 임시로 기본값 반환 - 실제 구현 시 EffectAnimation 구조에 맞게 수정 필요
     return {
       type: 'CASCADE',
@@ -80,7 +78,7 @@ export class EffectMapper {
   /**
    * DTO에서 이펙트 애니메이션으로 변환
    */
-  static animationFromDto(dto: EffectAnimationDto): EffectAnimation {
+  static animationFromDto(_dto: EffectAnimationDto): EffectAnimation {
     // 임시로 기본 EffectAnimation 생성 - 실제 구현 시 생성자에 맞게 수정 필요
     return {} as EffectAnimation;
   }

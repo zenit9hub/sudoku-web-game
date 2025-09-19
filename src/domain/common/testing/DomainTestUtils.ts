@@ -4,7 +4,7 @@
  * 도메인 레이어 테스트를 위한 공통 유틸리티와 헬퍼 함수들
  */
 
-import { DomainEvent, DomainEventPublisher } from '../events/DomainEvent.js';
+import { DomainEvent, DomainEventPublisher, DomainEventHandler } from '../events/DomainEvent.js';
 import { BusinessRule, BusinessRuleEngine } from '../rules/BusinessRule.js';
 
 /**
@@ -12,14 +12,14 @@ import { BusinessRule, BusinessRuleEngine } from '../rules/BusinessRule.js';
  */
 export class TestEventPublisher implements DomainEventPublisher {
   private publishedEvents: DomainEvent[] = [];
-  private handlers = new Map<string, Array<(event: DomainEvent) => void>>();
+  private handlers = new Map<string, DomainEventHandler<any>[]>();
 
   async publish(event: DomainEvent): Promise<void> {
     this.publishedEvents.push(event);
 
     const handlers = this.handlers.get(event.eventType) || [];
     for (const handler of handlers) {
-      handler(event);
+      await handler.handle(event);
     }
   }
 
@@ -31,21 +31,21 @@ export class TestEventPublisher implements DomainEventPublisher {
 
   subscribe<T extends DomainEvent>(
     eventType: string,
-    handler: (event: T) => void
+    handler: DomainEventHandler<T>
   ): void {
     if (!this.handlers.has(eventType)) {
       this.handlers.set(eventType, []);
     }
-    this.handlers.get(eventType)!.push(handler as any);
+    this.handlers.get(eventType)!.push(handler);
   }
 
   unsubscribe<T extends DomainEvent>(
     eventType: string,
-    handler: (event: T) => void
+    handler: DomainEventHandler<T>
   ): void {
     const handlers = this.handlers.get(eventType);
     if (handlers) {
-      const index = handlers.indexOf(handler as any);
+      const index = handlers.indexOf(handler);
       if (index >= 0) {
         handlers.splice(index, 1);
       }

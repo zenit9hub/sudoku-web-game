@@ -21,7 +21,7 @@ export class ValidateRealtimeQueryHandler {
 
   async handle(query: ValidateRealtimeQuery): Promise<ValidateRealtimeResult> {
     try {
-      const game = await this.gameRepository.load(query.data.gameId);
+      const game = await this.gameRepository.load(query.request.gameId);
 
       if (!game) {
         return {
@@ -37,12 +37,12 @@ export class ValidateRealtimeQueryHandler {
         };
       }
 
-      const position = GameMapper.positionFromDto(query.data.position);
+      const position = GameMapper.positionFromDto(query.request.position);
 
       const result = await this.validationService.validateRealtime(
         game.grid,
         position,
-        query.data.partialValue,
+        query.request.partialValue,
         game.state
       );
 
@@ -56,9 +56,9 @@ export class ValidateRealtimeQueryHandler {
           )
         },
         metadata: {
-          gameId: query.data.gameId,
-          position: query.data.position,
-          partialValue: query.data.partialValue,
+          gameId: query.request.gameId,
+          position: query.request.position,
+          partialValue: query.request.partialValue,
           timestamp: new Date().toISOString()
         }
       };

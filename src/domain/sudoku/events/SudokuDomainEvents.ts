@@ -8,6 +8,30 @@ import { Difficulty } from '../entities/GameState.js';
  */
 
 /**
+ * 게임 시작 이벤트
+ */
+export class GameStarted extends BaseDomainEvent {
+  constructor(
+    gameId: string,
+    difficulty: Difficulty,
+    metadata: {
+      gridSize: number;
+      clueCount: number;
+    }
+  ) {
+    super(
+      'GameStarted',
+      gameId,
+      'SudokuGame',
+      {
+        difficulty,
+        ...metadata
+      }
+    );
+  }
+}
+
+/**
  * 게임 생성 이벤트
  */
 export class GameCreated extends BaseDomainEvent {
@@ -158,14 +182,17 @@ export class GameCompleted extends BaseDomainEvent {
 export class GamePaused extends BaseDomainEvent {
   constructor(
     gameId: string,
-    elapsedTime: number
+    metadata: {
+      elapsedTime: number;
+      moveCount: number;
+    }
   ) {
     super(
       'GamePaused',
       gameId,
       'SudokuGame',
       {
-        elapsedTime,
+        ...metadata,
         pausedAt: new Date().toISOString()
       }
     );
@@ -178,15 +205,45 @@ export class GamePaused extends BaseDomainEvent {
 export class GameResumed extends BaseDomainEvent {
   constructor(
     gameId: string,
-    pauseDuration: number
+    metadata: {
+      elapsedTime: number;
+      moveCount: number;
+    }
   ) {
     super(
       'GameResumed',
       gameId,
       'SudokuGame',
       {
-        pauseDuration,
+        ...metadata,
         resumedAt: new Date().toISOString()
+      }
+    );
+  }
+}
+
+/**
+ * 힌트 요청 이벤트
+ */
+export class HintRequested extends BaseDomainEvent {
+  constructor(
+    gameId: string,
+    position: Position,
+    suggestedValue: CellValue,
+    metadata: {
+      hintsUsed: number;
+      hintType: string;
+      reasoning: string;
+    }
+  ) {
+    super(
+      'HintRequested',
+      gameId,
+      'SudokuGame',
+      {
+        position: { row: position.row, col: position.col },
+        suggestedValue: suggestedValue.value,
+        ...metadata
       }
     );
   }
@@ -223,10 +280,13 @@ export class HintUsed extends BaseDomainEvent {
 export class GameReset extends BaseDomainEvent {
   constructor(
     gameId: string,
-    resetStats: {
-      previousMoveCount: number;
-      previousMistakeCount: number;
-      previousElapsedTime: number;
+    metadata: {
+      previousStats: {
+        moveCount: number;
+        mistakeCount: number;
+        hintsUsed: number;
+        elapsedTime: number;
+      }
     }
   ) {
     super(
@@ -234,7 +294,7 @@ export class GameReset extends BaseDomainEvent {
       gameId,
       'SudokuGame',
       {
-        ...resetStats,
+        ...metadata,
         resetAt: new Date().toISOString()
       }
     );

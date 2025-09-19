@@ -2,7 +2,6 @@ import { CommandHandler, CommandResult, CommandResultFactory } from '../../commo
 import { CreateNewGameCommand, CreateNewGameResponse } from '../commands/CreateNewGameCommand.js';
 import { SudokuGame } from '../../../domain/sudoku/aggregates/Game.js';
 import { GameRepository } from '../../../domain/sudoku/repositories/GameRepository.js';
-import { SudokuValidationService } from '../../../domain/sudoku/services/GridValidationService.js';
 import { SudokuGeneratorService } from '../../../domain/sudoku/services/PuzzleGenerationService.js';
 import { Difficulty, GameState } from '../../../domain/sudoku/entities/GameState.js';
 
@@ -11,8 +10,7 @@ import { Difficulty, GameState } from '../../../domain/sudoku/entities/GameState
  */
 export class CreateNewGameCommandHandler implements CommandHandler<CreateNewGameCommand, CommandResult<CreateNewGameResponse>> {
   constructor(
-    private readonly gameRepository: GameRepository,
-    private readonly _validationService: SudokuValidationService
+    private readonly gameRepository: GameRepository
   ) {}
 
   async handle(command: CreateNewGameCommand): Promise<CommandResult<CreateNewGameResponse>> {

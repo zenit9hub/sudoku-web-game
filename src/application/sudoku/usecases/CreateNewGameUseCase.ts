@@ -1,7 +1,6 @@
 import { SudokuGame } from '../../../domain/sudoku/aggregates/Game';
 import { Difficulty, GameState } from '../../../domain/sudoku/entities/GameState';
 import { GameRepository } from '../../../domain/sudoku/repositories/GameRepository';
-import { SudokuValidationService } from '../../../domain/sudoku/services/GridValidationService';
 import { SudokuGeneratorService } from '../../../domain/sudoku/services/PuzzleGenerationService';
 
 export interface CreateNewGameRequest {
@@ -26,8 +25,7 @@ export interface CreateNewGameResponse {
  */
 export class CreateNewGameUseCase {
   constructor(
-    private readonly gameRepository: GameRepository,
-    private readonly _validationService: SudokuValidationService
+    private readonly gameRepository: GameRepository
   ) {}
 
   async execute(request: CreateNewGameRequest): Promise<CreateNewGameResponse> {

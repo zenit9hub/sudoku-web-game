@@ -50,6 +50,14 @@ export class GameState {
     return this.status === GameStatus.PAUSED;
   }
 
+  get gameId(): string {
+    return this.id;
+  }
+
+  get hintsUsed(): number {
+    return this.statistics.hints;
+  }
+
   get startTime(): number {
     return this.statistics.startTime.getTime();
   }

@@ -5,6 +5,9 @@ import {
   EventStore
 } from './DomainEvent.js';
 
+// DomainEventPublisher를 재export
+export type { DomainEventPublisher, DomainEventHandler } from './DomainEvent.js';
+
 /**
  * 인메모리 도메인 이벤트 발행자 구현
  */

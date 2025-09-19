@@ -26,7 +26,7 @@ export class ValidateBatchQueryHandler {
 
   async handle(query: ValidateBatchQuery): Promise<ValidateBatchResult> {
     try {
-      const game = await this.gameRepository.load(query.data.gameId);
+      const game = await this.gameRepository.load(query.request.gameId);
 
       if (!game) {
         return {
@@ -42,7 +42,7 @@ export class ValidateBatchQueryHandler {
         };
       }
 
-      const level = query.data.validationLevel || 'standard';
+      const level = query.request.validationLevel || 'standard';
       const results = await this.validationService.validateBatch(
         game.grid,
         level as any,
@@ -81,7 +81,7 @@ export class ValidateBatchQueryHandler {
           totalConflicts
         },
         metadata: {
-          gameId: query.data.gameId,
+          gameId: query.request.gameId,
           validationLevel: level,
           totalCellsValidated: results.size,
           timestamp: new Date().toISOString()

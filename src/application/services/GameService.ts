@@ -11,9 +11,6 @@ import { GameRepository } from '../../domain/sudoku/repositories/GameRepository'
 import { DomainEventPublisher } from '../../domain/common/events/DomainEventPublisher.js';
 import {
   GameStarted,
-  MoveAttempted,
-  ValidMoveCompleted,
-  InvalidMoveAttempted,
   GameCompleted,
   HintRequested,
   GamePaused,
