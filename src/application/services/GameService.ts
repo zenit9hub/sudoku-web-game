@@ -8,6 +8,19 @@ import { SudokuGeneratorService } from '../../domain/sudoku/services/PuzzleGener
 import { LineCompletionDetectionService } from '../../domain/sudoku/services/CompletionDetectionService';
 import { LineCompletionEffect, EffectAnimation } from '../../domain/effects/entities/LineCompletionEffect';
 import { GameRepository } from '../../domain/sudoku/repositories/GameRepository';
+import { DomainEventPublisher } from '../../domain/common/events/DomainEventPublisher.js';
+import {
+  GameStarted,
+  MoveAttempted,
+  ValidMoveCompleted,
+  InvalidMoveAttempted,
+  GameCompleted,
+  HintRequested,
+  GamePaused,
+  GameResumed,
+  GameReset
+} from '../../domain/sudoku/events/SudokuDomainEvents.js';
+import { EnhancedGridValidationService } from '../../domain/sudoku/services/EnhancedGridValidationService.js';
 
 export interface MoveResult {
   success: boolean;
@@ -26,22 +39,38 @@ export interface HintResult {
 
 export class GameService {
   private readonly lineCompletionDetectionService: LineCompletionDetectionService;
+  private readonly enhancedValidationService: EnhancedGridValidationService;
 
   constructor(
     private readonly gameRepository: GameRepository,
-    private readonly validationService: SudokuValidationService
+    private readonly validationService: SudokuValidationService,
+    private readonly eventPublisher?: DomainEventPublisher
   ) {
     this.lineCompletionDetectionService = new LineCompletionDetectionService();
+    this.enhancedValidationService = new EnhancedGridValidationService(
+      Difficulty.MEDIUM,
+      this.eventPublisher
+    );
   }
 
   async createNewGame(difficulty: Difficulty): Promise<SudokuGame> {
     const gameId = this.generateGameId();
     const grid = await this.generateSudokuGrid(difficulty);
     const state = GameState.create(gameId, difficulty);
-    
+
     const game = SudokuGame.create(gameId, grid, state);
     await this.gameRepository.save(game);
-    
+
+    // 게임 시작 이벤트 발행
+    if (this.eventPublisher) {
+      await this.eventPublisher.publish(
+        new GameStarted(gameId, difficulty, {
+          gridSize: 9,
+          clueCount: grid.getFilledCellCount()
+        })
+      );
+    }
+
     return game;
   }
 
@@ -64,7 +93,14 @@ export class GameService {
       return this.createMoveResult(false, game, false, [], []);
     }
 
-    const validation = this.validationService.validateMove(game.grid, position, value);
+    // 향상된 검증 서비스 사용 (도메인 이벤트 포함)
+    const validation = await this.enhancedValidationService.validateMove(
+      game.grid,
+      position,
+      value,
+      game.state
+    );
+
     const newGrid = game.grid.setCell(position, value);
 
     let newState = game.state.addMove();
@@ -73,7 +109,7 @@ export class GameService {
     }
 
     const updatedGame = game.updateGrid(newGrid).updateState(newState);
-    const isComplete = this.validationService.isGridComplete(newGrid);
+    const isComplete = this.enhancedValidationService.isGridComplete(newGrid);
 
     // Detect line completions only for valid moves
     let lineCompletionEffects: LineCompletionEffect[] = [];
@@ -87,6 +123,19 @@ export class GameService {
     }
 
     const finalGame = isComplete ? updatedGame.updateState(newState.complete()) : updatedGame;
+
+    // 게임 완료 이벤트 발행
+    if (isComplete && this.eventPublisher) {
+      await this.eventPublisher.publish(
+        new GameCompleted(game.state.gameId, game.state.difficulty, {
+          elapsedTime: finalGame.state.elapsedTime,
+          moveCount: finalGame.state.moveCount,
+          mistakeCount: finalGame.state.mistakeCount,
+          hintsUsed: finalGame.state.hintsUsed
+        })
+      );
+    }
+
     await this.saveGame(finalGame);
 
     return this.createMoveResult(true, finalGame, isComplete, validation.conflictingPositions, lineCompletionEffects);
@@ -98,21 +147,32 @@ export class GameService {
 
   async getHint(game: SudokuGame): Promise<HintResult | null> {
     const emptyCells = game.grid.getEmptyCells();
-    
+
     if (emptyCells.length === 0) {
       return null;
     }
 
     for (const cell of emptyCells) {
       const possibleValues = this.validationService.getPossibleValues(game.grid, cell.position);
-      
+
       if (possibleValues.length === 1) {
         const hintValue = possibleValues[0];
         const newState = game.state.addHint();
         const updatedGame = game.updateState(newState);
-        
+
+        // 힌트 요청 이벤트 발행
+        if (this.eventPublisher) {
+          await this.eventPublisher.publish(
+            new HintRequested(game.state.gameId, cell.position, hintValue, {
+              hintsUsed: updatedGame.state.hintsUsed,
+              hintType: 'naked_single',
+              reasoning: `Only ${hintValue.value} is possible at this position`
+            })
+          );
+        }
+
         await this.saveGame(updatedGame);
-        
+
         return {
           success: true,
           game: updatedGame,
@@ -124,14 +184,25 @@ export class GameService {
 
     const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
     const possibleValues = this.validationService.getPossibleValues(game.grid, randomCell.position);
-    
+
     if (possibleValues.length > 0) {
       const hintValue = possibleValues[0];
       const newState = game.state.addHint();
       const updatedGame = game.updateState(newState);
-      
+
+      // 힌트 요청 이벤트 발행
+      if (this.eventPublisher) {
+        await this.eventPublisher.publish(
+          new HintRequested(game.state.gameId, randomCell.position, hintValue, {
+            hintsUsed: updatedGame.state.hintsUsed,
+            hintType: 'random',
+            reasoning: `One of ${possibleValues.length} possible values`
+          })
+        );
+      }
+
       await this.saveGame(updatedGame);
-      
+
       return {
         success: true,
         game: updatedGame,
@@ -161,6 +232,21 @@ export class GameService {
 
   async resetGame(game: SudokuGame): Promise<SudokuGame> {
     const resetGame = game.reset();
+
+    // 게임 리셋 이벤트 발행
+    if (this.eventPublisher) {
+      await this.eventPublisher.publish(
+        new GameReset(game.state.gameId, {
+          previousStats: {
+            moveCount: game.state.moveCount,
+            mistakeCount: game.state.mistakeCount,
+            hintsUsed: game.state.hintsUsed,
+            elapsedTime: game.state.elapsedTime
+          }
+        })
+      );
+    }
+
     await this.saveGame(resetGame);
     return resetGame;
   }
@@ -168,7 +254,17 @@ export class GameService {
   async pauseGame(game: SudokuGame): Promise<SudokuGame> {
     const newState = game.state.pause();
     const updatedGame = game.updateState(newState);
-    
+
+    // 게임 일시정지 이벤트 발행
+    if (this.eventPublisher) {
+      await this.eventPublisher.publish(
+        new GamePaused(game.state.gameId, {
+          elapsedTime: updatedGame.state.elapsedTime,
+          moveCount: updatedGame.state.moveCount
+        })
+      );
+    }
+
     await this.saveGame(updatedGame);
     return updatedGame;
   }
@@ -176,7 +272,17 @@ export class GameService {
   async resumeGame(game: SudokuGame): Promise<SudokuGame> {
     const newState = game.state.resume();
     const updatedGame = game.updateState(newState);
-    
+
+    // 게임 재개 이벤트 발행
+    if (this.eventPublisher) {
+      await this.eventPublisher.publish(
+        new GameResumed(game.state.gameId, {
+          elapsedTime: updatedGame.state.elapsedTime,
+          moveCount: updatedGame.state.moveCount
+        })
+      );
+    }
+
     await this.saveGame(updatedGame);
     return updatedGame;
   }
