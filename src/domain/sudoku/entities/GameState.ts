@@ -30,10 +30,49 @@ export class GameState {
     public readonly selectedCell?: { row: number; col: number }
   ) {}
 
+  get moveCount(): number {
+    return this.statistics.moves;
+  }
+
+  get mistakeCount(): number {
+    return this.statistics.mistakes;
+  }
+
+  get elapsedTime(): number {
+    return this.statistics.elapsedTime;
+  }
+
+  get isComplete(): boolean {
+    return this.status === GameStatus.COMPLETED;
+  }
+
+  get isPaused(): boolean {
+    return this.status === GameStatus.PAUSED;
+  }
+
+  get startTime(): number {
+    return this.statistics.startTime.getTime();
+  }
+
   static create(id: string, difficulty: Difficulty): GameState {
     return new GameState(
       id,
       difficulty,
+      GameStatus.INITIAL,
+      {
+        startTime: new Date(),
+        elapsedTime: 0,
+        moves: 0,
+        hints: 0,
+        mistakes: 0
+      }
+    );
+  }
+
+  static createNew(difficulty?: Difficulty): GameState {
+    return new GameState(
+      '',
+      difficulty || Difficulty.MEDIUM,
       GameStatus.INITIAL,
       {
         startTime: new Date(),
