@@ -1,4 +1,4 @@
-import { LineCompletionEffect, CellEffectState } from '../../domain/models/LineCompletionEffect';
+import { LineCompletionEffect, CellEffectState } from '../../domain/effects/entities/LineCompletionEffect';
 
 export interface EffectRenderOptions {
   theme: 'light' | 'dark';

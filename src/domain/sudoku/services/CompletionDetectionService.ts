@@ -1,7 +1,7 @@
-import { SudokuGrid } from '../models/SudokuGrid';
-import { Position } from '../models/Position';
-import { LineCompletionEffect, EffectAnimation } from '../models/LineCompletionEffect';
-import { EffectFactory } from '../models/EffectFactory';
+import { SudokuGrid } from '../aggregates/Grid';
+import { Position } from '../value-objects/Position';
+import { LineCompletionEffect, EffectAnimation } from '../../effects/entities/LineCompletionEffect';
+import { EffectFactory } from '../../effects/services/EffectFactory';
 
 export interface LineCompletionEvent {
   type: 'ROW_COMPLETED' | 'COLUMN_COMPLETED';

@@ -1,10 +1,10 @@
-import { GameRepository } from '../interfaces/GameRepository';
-import { SudokuGame } from '../../domain/models/SudokuGame';
-import { GameState, GameStatus, Difficulty } from '../../domain/models/GameState';
-import { SudokuGrid } from '../../domain/models/SudokuGrid';
-import { Cell } from '../../domain/models/Cell';
-import { Position } from '../../domain/models/Position';
-import { CellValue } from '../../domain/models/CellValue';
+import { GameRepository } from '../../domain/sudoku/repositories/GameRepository';
+import { SudokuGame } from '../../domain/sudoku/aggregates/Game';
+import { GameState, GameStatus, Difficulty } from '../../domain/sudoku/entities/GameState';
+import { SudokuGrid } from '../../domain/sudoku/aggregates/Grid';
+import { Cell } from '../../domain/sudoku/entities/Cell';
+import { Position } from '../../domain/sudoku/value-objects/Position';
+import { CellValue } from '../../domain/sudoku/value-objects/CellValue';
 
 interface SerializedGame {
   id: string;

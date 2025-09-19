@@ -1,6 +1,6 @@
-import { Cell } from './Cell';
-import { Position } from './Position';
-import { CellValue } from './CellValue';
+import { Cell } from '../entities/Cell';
+import { Position } from '../value-objects/Position';
+import { CellValue } from '../value-objects/CellValue';
 
 export class SudokuGrid {
   private static readonly GRID_SIZE = 9;

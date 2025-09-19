@@ -1,5 +1,5 @@
-import { CellValue } from './CellValue';
-import { Position } from './Position';
+import { CellValue } from '../value-objects/CellValue';
+import { Position } from '../value-objects/Position';
 
 export interface CellOptions {
   isGiven?: boolean;

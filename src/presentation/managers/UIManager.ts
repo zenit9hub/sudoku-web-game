@@ -1,5 +1,5 @@
-import { SudokuGame } from '@/domain/models/SudokuGame';
-import { Position } from '@/domain/models/Position';
+import { SudokuGame } from '@/domain/sudoku/aggregates/Game';
+import { Position } from '@/domain/sudoku/value-objects/Position';
 import { DOMElementManager } from './DOMElementManager';
 import { DOM_SELECTORS } from '../config/DOMSelectors';
 import { APP_CONFIG, UI_COLORS, MESSAGES } from '../config/AppConfig';

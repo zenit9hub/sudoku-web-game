@@ -1,10 +1,10 @@
 import { GameService } from '../../application/services/GameService';
-import { GameRenderer } from '../interfaces/GameRenderer';
-import { SudokuGame } from '../../domain/models/SudokuGame';
-import { Position } from '../../domain/models/Position';
-import { CellValue } from '../../domain/models/CellValue';
-import { Difficulty } from '../../domain/models/GameState';
-import { LineCompletionEffect } from '../../domain/models/LineCompletionEffect';
+import { GameRenderer } from '../../infrastructure/rendering/GameRenderer';
+import { SudokuGame } from '../../domain/sudoku/aggregates/Game';
+import { Position } from '../../domain/sudoku/value-objects/Position';
+import { CellValue } from '../../domain/sudoku/value-objects/CellValue';
+import { Difficulty } from '../../domain/sudoku/entities/GameState';
+import { LineCompletionEffect } from '../../domain/effects/entities/LineCompletionEffect';
 import { CanvasGameRenderer } from '../renderers/CanvasGameRenderer';
 
 export interface GameControllerEvents {

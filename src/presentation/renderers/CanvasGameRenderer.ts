@@ -1,11 +1,11 @@
-import { GameRenderer, RenderOptions } from '../interfaces/GameRenderer';
-import { SudokuGame } from '../../domain/models/SudokuGame';
-import { Position } from '../../domain/models/Position';
-import { Cell } from '../../domain/models/Cell';
+import { GameRenderer, RenderOptions } from '../../infrastructure/rendering/GameRenderer';
+import { SudokuGame } from '../../domain/sudoku/aggregates/Game';
+import { Position } from '../../domain/sudoku/value-objects/Position';
+import { Cell } from '../../domain/sudoku/entities/Cell';
 import { BoardRenderer, BoardRenderOptions } from './BoardRenderer';
 import { SelectionEffectsRenderer, SelectionRenderOptions } from './SelectionEffectsRenderer';
 import { LineCompletionEffectsRenderer, EffectRenderOptions } from './LineCompletionEffectsRenderer';
-import { LineCompletionEffect } from '../../domain/models/LineCompletionEffect';
+import { LineCompletionEffect } from '../../domain/effects/entities/LineCompletionEffect';
 
 export class CanvasGameRenderer implements GameRenderer {
   private ctx: CanvasRenderingContext2D;

@@ -151,7 +151,7 @@ class ButtonEventHandler {
 
   private async handleNewGame(): Promise<void> {
     // Import Difficulty here to avoid circular dependencies
-    const { Difficulty } = await import('@/domain/models/GameState.js');
+    const { Difficulty } = await import('@/domain/sudoku/entities/GameState.js');
     await this.gameController.newGame(Difficulty.EASY);
   }
 

@@ -1,20 +1,10 @@
-import { Position } from './Position';
+import { Position } from '../../sudoku/value-objects/Position';
 
-export enum EffectType {
-  ROW_COMPLETION = 'ROW_COMPLETION',
-  COLUMN_COMPLETION = 'COLUMN_COMPLETION'
-}
+import { EffectType } from '../value-objects/EffectType';
+import { EffectAnimation } from '../value-objects/EffectAnimation';
+import { EffectState } from '../value-objects/EffectState';
 
-export enum EffectAnimation {
-  LINEAR = 'LINEAR',     // 선형 이펙트 (기존 방식)
-  RADIAL = 'RADIAL'      // 중심에서 퍼지는 이펙트
-}
-
-export enum EffectState {
-  PENDING = 'PENDING',
-  PLAYING = 'PLAYING',
-  COMPLETED = 'COMPLETED'
-}
+export { EffectType, EffectAnimation, EffectState };
 
 export interface CellEffectState {
   position: Position;

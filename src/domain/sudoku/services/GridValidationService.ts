@@ -1,6 +1,6 @@
-import { SudokuGrid } from '../models/SudokuGrid';
-import { Position } from '../models/Position';
-import { CellValue } from '../models/CellValue';
+import { SudokuGrid } from '../aggregates/Grid';
+import { Position } from '../value-objects/Position';
+import { CellValue } from '../value-objects/CellValue';
 
 export interface ValidationResult {
   isValid: boolean;

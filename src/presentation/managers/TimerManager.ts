@@ -1,4 +1,4 @@
-import { SudokuGame } from '@/domain/models/SudokuGame';
+import { SudokuGame } from '@/domain/sudoku/aggregates/Game';
 import { formatTime } from '../../utils/index';
 
 /**

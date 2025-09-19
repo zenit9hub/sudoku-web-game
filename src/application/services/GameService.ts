@@ -1,13 +1,13 @@
-import { SudokuGame } from '../../domain/models/SudokuGame';
-import { SudokuGrid } from '../../domain/models/SudokuGrid';
-import { GameState, Difficulty } from '../../domain/models/GameState';
-import { Position } from '../../domain/models/Position';
-import { CellValue } from '../../domain/models/CellValue';
-import { SudokuValidationService } from '../../domain/services/SudokuValidationService';
-import { SudokuGeneratorService } from '../../domain/services/SudokuGeneratorService';
-import { LineCompletionDetectionService } from '../../domain/services/LineCompletionDetectionService';
-import { LineCompletionEffect, EffectAnimation } from '../../domain/models/LineCompletionEffect';
-import { GameRepository } from '../../infrastructure/interfaces/GameRepository';
+import { SudokuGame } from '../../domain/sudoku/aggregates/Game';
+import { SudokuGrid } from '../../domain/sudoku/aggregates/Grid';
+import { GameState, Difficulty } from '../../domain/sudoku/entities/GameState';
+import { Position } from '../../domain/sudoku/value-objects/Position';
+import { CellValue } from '../../domain/sudoku/value-objects/CellValue';
+import { SudokuValidationService } from '../../domain/sudoku/services/GridValidationService';
+import { SudokuGeneratorService } from '../../domain/sudoku/services/PuzzleGenerationService';
+import { LineCompletionDetectionService } from '../../domain/sudoku/services/CompletionDetectionService';
+import { LineCompletionEffect, EffectAnimation } from '../../domain/effects/entities/LineCompletionEffect';
+import { GameRepository } from '../../domain/sudoku/repositories/GameRepository';
 
 export interface MoveResult {
   success: boolean;

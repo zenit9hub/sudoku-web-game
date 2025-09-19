@@ -1,5 +1,5 @@
-import { Position } from './Position';
-import { LineCompletionEffect, EffectType, EffectAnimation, EffectState, CellEffectState } from './LineCompletionEffect';
+import { Position } from '../../sudoku/value-objects/Position';
+import { LineCompletionEffect, EffectType, EffectAnimation, EffectState } from './LineCompletionEffect';
 
 export class RadialEffect extends LineCompletionEffect {
   private static readonly CELL_DELAY = 35; // ms delay between cells

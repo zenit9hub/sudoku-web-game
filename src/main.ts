@@ -1,9 +1,9 @@
 import { GameService } from './application/services/GameService';
-import { SudokuValidationService } from './domain/services/SudokuValidationService';
+import { SudokuValidationService } from './domain/sudoku/services/GridValidationService';
 import { LocalStorageGameRepository } from './infrastructure/repositories/LocalStorageGameRepository';
 import { CanvasGameRenderer } from './presentation/renderers/CanvasGameRenderer';
 import { GameController } from './presentation/controllers/GameController';
-import { SudokuGame } from './domain/models/SudokuGame';
+import { SudokuGame } from './domain/sudoku/aggregates/Game';
 
 // Import new manager classes
 import { DOMElementManager } from './presentation/managers/DOMElementManager';
@@ -90,7 +90,7 @@ class SudokuApp {
    * Start a new game with default difficulty
    */
   private async startNewGame(): Promise<void> {
-    const { Difficulty } = await import('./domain/models/GameState.js');
+    const { Difficulty } = await import('./domain/sudoku/entities/GameState.js');
     await this.gameController.newGame(Difficulty.EASY);
   }
 

@@ -1,7 +1,7 @@
-import { Position } from './Position';
-import { LineCompletionEffect, EffectAnimation } from './LineCompletionEffect';
-import { LinearEffect } from './LinearEffect';
-import { RadialEffect } from './RadialEffect';
+import { Position } from '../../sudoku/value-objects/Position';
+import { LineCompletionEffect, EffectAnimation } from '../entities/LineCompletionEffect';
+import { LinearEffect } from '../entities/LinearEffect';
+import { RadialEffect } from '../entities/RadialEffect';
 
 export class EffectFactory {
   private static effectIdCounter = 0;

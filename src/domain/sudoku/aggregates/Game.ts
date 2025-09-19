@@ -1,5 +1,5 @@
-import { SudokuGrid } from './SudokuGrid';
-import { GameState } from './GameState';
+import { SudokuGrid } from './Grid';
+import { GameState } from '../entities/GameState';
 
 export class SudokuGame {
   constructor(

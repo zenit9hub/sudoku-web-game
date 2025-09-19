@@ -1,5 +1,5 @@
-import { SudokuGame } from '../../domain/models/SudokuGame';
-import { GameState } from '../../domain/models/GameState';
+import { SudokuGame } from '../aggregates/Game';
+import { GameState } from '../entities/GameState';
 
 export interface GameRepository {
   save(game: SudokuGame): Promise<void>;
