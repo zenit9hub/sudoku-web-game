@@ -35,7 +35,7 @@ export class CreateNewGameUseCase {
       const gameId = this.generateGameId();
       const grid = await this.generateSudokuGrid(request.difficulty, request.seed);
 
-      const gameState = GameState.create(gameId, difficulty);
+      const gameState = GameState.create(gameId, request.difficulty);
       const game = SudokuGame.create(gameId, grid, gameState);
       await this.gameRepository.save(game);
 
