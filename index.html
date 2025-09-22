@@ -37,13 +37,18 @@
             <div class="game-info-top">
                 <div class="info-item">
                     <span class="info-label">점수:</span>
-                    <span class="info-value">0</span>
+                    <span id="gameScore" class="info-value">0</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">초보자</span>
+                    <div class="difficulty-display">
+                        <span id="gameDifficulty" class="difficulty-text">Easy</span>
+                        <div class="mistake-counter">
+                            실패: <span id="mistakeCount">0</span> / <span id="maxMistakes">3</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="info-item">
-                    <div id="timer" class="timer-display">00:14</div>
+                    <div id="timer" class="timer-display">00:00</div>
                 </div>
             </div>
 

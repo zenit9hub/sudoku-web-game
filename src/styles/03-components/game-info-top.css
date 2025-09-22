@@ -57,12 +57,38 @@
   text-align: center;
 }
 
-/* 중앙 난이도 표시 */
-.game-info-top .info-item:nth-child(2) .info-label {
+/* 중앙 난이도 및 실패 표시 */
+.difficulty-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.difficulty-text {
   font-size: var(--font-size-md);
   color: var(--color-primary);
   font-weight: 600;
-  margin-bottom: 0;
+}
+
+.mistake-counter {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.mistake-counter span {
+  font-weight: 600;
+}
+
+#mistakeCount {
+  color: var(--color-warning);
+}
+
+#maxMistakes {
+  color: var(--text-secondary);
 }
 
 /* 반응형 조정 */

@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Sudoku web game built with TypeScript and HTML5 Canvas, implementing Domain-Driven Design (DDD) architecture. The game features interactive gameplay, responsive design, and clean separation of concerns across domain, application, infrastructure, and presentation layers.
+This is a Sudoku web game built with TypeScript and HTML5 Canvas, implementing Domain-Driven Design (DDD) architecture. The game features professional mobile app-style UI, interactive gameplay, responsive design, and clean separation of concerns across domain, application, infrastructure, and presentation layers.
+
+**Live Demo**: [GitHub Pages](https://zenit.github.io/sudoku-web-game/)
 
 ## Development Commands
 
@@ -156,12 +158,21 @@ CQRS pattern with comprehensive application services:
 - **Game Analytics**: Move statistics, mistake tracking, and performance metrics
 - **State Management**: Save/load, pause/resume, and reset functionality
 
+### Professional Mobile App UI
+- **Header Navigation**: Back button, title, and action icons (⭐ 📝 🎨 ⚙️)
+- **Game Information Bar**: Real-time score, difficulty, mistakes counter ("실패: 0 / 3"), and timer
+- **Interactive Toolbar**: Four main actions - Undo, Clear, Notes (ON/OFF status), Hints (counter display)
+- **Enhanced Number Pad**: Visual remaining count for each digit (1-9) with modern button design
+- **Status Indicators**: Progress tracking ("0/81"), difficulty display, and mistake tracking
+- **Responsive Layout**: Optimized sections with proper height distribution and mobile-first design
+
 ### Visual Effects System
 - **Line Completion Effects**: Animated celebrations for completed rows/columns/boxes
 - **Cascading Animations**: Smooth transitions with configurable timing and effects
 - **Performance Optimized**: 60fps rendering with efficient canvas management
+- **Modern UI Components**: CSS custom properties, component-based styling, professional color scheme
 
-**Responsive Design**: Dynamic canvas scaling maintains aspect ratio across different screen sizes while preserving game functionality.
+**Responsive Design**: Dynamic canvas scaling maintains aspect ratio across different screen sizes while preserving game functionality and mobile app aesthetics.
 
 ## Testing Strategy
 
@@ -209,6 +220,14 @@ Jest configuration includes path aliases matching the main TypeScript config for
 
 ## Recent Architectural Enhancements
 
+### UX/UI Modernization (Latest - 2025)
+- **Mobile App-Style Interface**: Complete UI overhaul following modern mobile app design patterns
+- **Component-Based Styling**: Organized CSS with custom properties and component isolation
+- **Professional Layout**: Header navigation, game info bar, interactive toolbar, and enhanced number pad
+- **Status Indicators**: Real-time mistake counter, difficulty display, progress tracking, and timer
+- **Responsive Design**: Mobile-first approach with optimized section heights and layouts
+- **GitHub Pages Integration**: Automated deployment with proper base path configuration
+
 ### Phase 3: Application Layer Integration (Completed)
 - Implemented comprehensive CQRS pattern with commands and queries
 - Added advanced application services with multi-level validation
@@ -222,3 +241,9 @@ Jest configuration includes path aliases matching the main TypeScript config for
 - Cleaned up unused imports and variables
 - Ensured proper async/await pattern usage
 - Validated complete build pipeline functionality
+
+### Deployment & CI/CD (Completed)
+- GitHub Actions workflow with automated testing and deployment
+- Proper test configuration with Jest and passWithNoTests for clean CI
+- Vite build optimization with correct base path for GitHub Pages
+- Production bundle optimization (~67KB gzipped)
