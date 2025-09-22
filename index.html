@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Game - DDD Architecture</title>
+    
+  <script type="module" crossorigin src="/sudoku-web-game/assets/index-d3e35bcd.js"></script>
+  <link rel="stylesheet" href="/sudoku-web-game/assets/index-ced6bba6.css">
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="game-container">
+            <!-- 헤더 영역 -->
+            <div class="game-header">
+                <h1>🧩 Sudoku Game</h1>
+            </div>
+
+            <!-- 메인 게임 영역 -->
+            <div class="game-main">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+
+            <!-- 숫자 입력 영역 -->
+            <div class="game-input">
+                <div class="number-pad-title">숫자 입력</div>
+                <div class="number-grid">
+                    <button class="number-btn" data-number="1">
+                        <span class="number-value">1</span>
+                        <span class="number-count">9</span>
+                    </button>
+                    <button class="number-btn" data-number="2">
+                        <span class="number-value">2</span>
+                        <span class="number-count">9</span>
+                    </button>
+                    <button class="number-btn" data-number="3">
+                        <span class="number-value">3</span>
+                        <span class="number-count">9</span>
+                    </button>
+                    <button class="number-btn" data-number="4">
+                        <span class="number-value">4</span>
+                        <span class="number-count">9</span>
+                    </button>
+                    <button class="number-btn" data-number="5">
+                        <span class="number-value">5</span>
+                        <span class="number-count">9</span>
+                    </button>
+                    <button class="number-btn" data-number="6">
+                        <span class="number-value">6</span>
+                        <span class="number-count">9</span>
+                    </button>
+                    <button class="number-btn" data-number="7">
+                        <span class="number-value">7</span>
+                        <span class="number-count">9</span>
+                    </button>
+                    <button class="number-btn" data-number="8">
+                        <span class="number-value">8</span>
+                        <span class="number-count">9</span>
+                    </button>
+                    <button class="number-btn" data-number="9">
+                        <span class="number-value">9</span>
+                        <span class="number-count">9</span>
+                    </button>
+                </div>
+                <button id="clearCell" class="clear-btn">지우기</button>
+                <div id="selectionInfo" class="selection-info">칸을 선택하고 숫자를 입력하세요</div>
+            </div>
+
+            <!-- 게임 정보 영역 -->
+            <div class="game-stats">
+                <div class="stats-row">
+                    <div class="info-item">
+                        <div class="info-label">Time</div>
+                        <div id="timer" class="info-value">00:00</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Progress</div>
+                        <div id="completion" class="info-value">0/81</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Hints</div>
+                        <div id="hints" class="info-value">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 컨트롤 영역 -->
+            <div class="game-controls">
+                <button id="newGame" class="btn btn-primary">New Game</button>
+                <button id="resetGame" class="btn btn-secondary">Reset</button>
+                <button id="hintButton" class="btn btn-secondary">Hint</button>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+</html>
