@@ -11,7 +11,26 @@
         <div class="game-container">
             <!-- 헤더 영역 -->
             <div class="game-header">
-                <h1>🧩 Sudoku Game</h1>
+                <div class="header-left">
+                    <button class="header-btn back-btn" aria-label="뒤로가기">
+                        <span class="header-icon">←</span>
+                    </button>
+                    <h1 class="game-title">Sudoku Game</h1>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn" id="favoriteBtn" aria-label="즐겨찾기">
+                        <span class="header-icon">⭐</span>
+                    </button>
+                    <button class="header-btn" id="editBtn" aria-label="편집">
+                        <span class="header-icon">✏️</span>
+                    </button>
+                    <button class="header-btn" id="themeBtn" aria-label="테마">
+                        <span class="header-icon">🎨</span>
+                    </button>
+                    <button class="header-btn" id="settingsBtn" aria-label="설정">
+                        <span class="header-icon">⚙️</span>
+                    </button>
+                </div>
             </div>
 
             <!-- 게임 정보 영역 (그리드 위) -->
