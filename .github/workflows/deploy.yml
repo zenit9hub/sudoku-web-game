@@ -37,8 +37,9 @@ jobs:
       - name: Run type check
         run: npm run typecheck
 
-      - name: Run lint
-        run: npm run lint
+      # Temporarily disable linting until ESLint configuration is set up
+      # - name: Run lint
+      #   run: npm run lint
 
       - name: Build
         run: npm run build

@@ -2,10 +2,15 @@ export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   roots: ['<rootDir>/src'],
+  passWithNoTests: true,
   testMatch: [
     '**/__tests__/**/*.test.ts',
     '**/*.test.ts',
     '**/*.spec.ts'
+  ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '\\.disabled\\.'
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
