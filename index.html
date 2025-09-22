@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku Game - DDD Architecture</title>
-    
-  <script type="module" crossorigin src="/sudoku-web-game/assets/index-65a6690b.js"></script>
-  <link rel="stylesheet" href="/sudoku-web-game/assets/index-35b1fdb2.css">
+    <link rel="stylesheet" href="/src/styles/main.css">
 </head>
 <body>
     <div class="game-wrapper">
@@ -14,6 +12,20 @@
             <!-- 헤더 영역 -->
             <div class="game-header">
                 <h1>🧩 Sudoku Game</h1>
+            </div>
+
+            <!-- 게임 정보 영역 (그리드 위) -->
+            <div class="game-info-top">
+                <div class="info-item">
+                    <span class="info-label">점수:</span>
+                    <span class="info-value">0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">초보자</span>
+                </div>
+                <div class="info-item">
+                    <div id="timer" class="timer-display">00:14</div>
+                </div>
             </div>
 
             <!-- 메인 게임 영역 -->
@@ -93,6 +105,6 @@
         </div>
     </div>
 
-    
+    <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

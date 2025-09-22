@@ -10,6 +10,7 @@
 
 /* 03. Components Layer - UI Elements */
 @import './03-components/game-header.css';
+@import './03-components/game-info-top.css';
 @import './03-components/game-canvas.css';
 @import './03-components/game-controls.css';
 @import './03-components/number-input.css';

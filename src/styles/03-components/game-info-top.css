@@ -1,0 +1,79 @@
+/* Game Info Top Component - Above Grid */
+
+.game-info-top {
+  width: 100%;
+  height: var(--info-top-height);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-container);
+  border-bottom: 1px solid var(--border-section);
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.game-info-top .info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+}
+
+.game-info-top .info-item:first-child {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.game-info-top .info-item:last-child {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.game-info-top .info-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+}
+
+.game-info-top .info-value {
+  font-size: var(--font-size-md);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.timer-display {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  background: var(--bg-section);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* 중앙 난이도 표시 */
+.game-info-top .info-item:nth-child(2) .info-label {
+  font-size: var(--font-size-md);
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+/* 반응형 조정 */
+@media (max-width: 480px) {
+  .game-info-top {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .timer-display {
+    font-size: var(--font-size-md);
+    padding: 2px var(--spacing-xs);
+    min-width: 50px;
+  }
+}

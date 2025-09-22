@@ -66,7 +66,8 @@
 
   /* Section Heights (percentages of container) */
   --header-height: 7.35%;   /* 50/680 */
-  --main-height: 50%;       /* 340/680 */
+  --info-top-height: 6%;    /* New: game info above grid */
+  --main-height: 44%;       /* Reduced from 50% to accommodate info-top */
   --controls-height: 8.82%; /* 60/680 */
   --input-height: 23.53%;   /* 160/680 */
   --stats-height: 8.82%;    /* 60/680 */
