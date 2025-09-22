@@ -6,9 +6,9 @@ export interface BoardRenderOptions {
 }
 
 export class BoardRenderer {
-  private borderWidth: number = 1;
-  private subGridBorderWidth: number = 2;
-  private outerBorderWidth: number = 2;
+  private borderWidth: number = 0.5;
+  private subGridBorderWidth: number = 3;
+  private outerBorderWidth: number = 3;
 
   constructor(
     private ctx: CanvasRenderingContext2D,

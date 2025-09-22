@@ -103,8 +103,8 @@ export class CanvasGameRenderer implements GameRenderer {
   private renderBoard(options: RenderOptions): void {
     const boardOptions: BoardRenderOptions = {
       theme: options.theme,
-      borderColor: options.theme === 'dark' ? '#555555' : '#cccccc',
-      subGridBorderColor: options.theme === 'dark' ? '#ffffff' : '#000000',
+      borderColor: options.theme === 'dark' ? '#555555' : '#e0e0e0',
+      subGridBorderColor: options.theme === 'dark' ? '#ffffff' : '#333333',
       backgroundColor: options.theme === 'dark' ? '#2a2a2a' : '#ffffff'
     };
 

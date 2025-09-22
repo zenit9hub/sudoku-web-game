@@ -3,6 +3,8 @@ import { resolve } from 'path';
 
 export default defineConfig({
   base: '/sudoku-web-game/',
+  root: '.',
+  publicDir: 'public',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),

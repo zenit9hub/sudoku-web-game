@@ -28,6 +28,11 @@
   --border-light: #ddd;
   --border-section: #e9ecef;
 
+  /* Grid-specific colors */
+  --grid-cell-border: #e0e0e0;
+  --grid-subgrid-border: #333;
+  --grid-outer-border: #333;
+
   /* Shadows */
   --shadow-container: 0 4px 20px rgba(0, 0, 0, 0.1);
   --shadow-canvas: 0 2px 10px rgba(0, 0, 0, 0.15);
