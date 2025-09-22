@@ -12,6 +12,7 @@
 @import './03-components/game-header.css';
 @import './03-components/game-info-top.css';
 @import './03-components/game-canvas.css';
+@import './03-components/game-toolbar.css';
 @import './03-components/game-controls.css';
 @import './03-components/number-input.css';
 @import './03-components/game-stats.css';
