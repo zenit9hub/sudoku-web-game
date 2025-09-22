@@ -106,7 +106,7 @@ export class GameService {
     }
 
     const updatedGame = game.updateGrid(newGrid).updateState(newState);
-    const isComplete = this.enhancedValidationService.isGridComplete(newGrid, updatedGame.state);
+    const isComplete = this.enhancedValidationService.isGridComplete(newGrid);
 
     // 디버깅을 위한 로깅 추가
     console.log('Move validation result:', {

@@ -93,7 +93,7 @@ export class EnhancedGridValidationService {
   /**
    * 그리드 완료 여부 검사
    */
-  isGridComplete(grid: any, gameState?: any): boolean {
+  isGridComplete(grid: any): boolean {
     console.log('Checking if grid is complete...');
 
     // 1. 모든 셀이 채워져 있는지 확인
